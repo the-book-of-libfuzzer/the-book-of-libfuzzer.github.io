@@ -1,0 +1,37 @@
+flowchart LR
+    subgraph CF["control-flow coverage · §1.6, §4.2"]
+        direction TB
+        A1["SimpleTest<br/>3 bytes, 3 nested ifs"]
+        A2["FourIndependentBranchesTest<br/>FullCoverageSetTest"]
+        A3["CounterTest<br/>hit-count buckets"]
+        A4["ThreeFunctionsTest<br/>CallerCalleeTest (indir-calls)"]
+    end
+    subgraph DF["data-flow signals · §3.3, §3.4"]
+        direction TB
+        B1["SimpleCmpTest, SwapCmpTest<br/>AbsNegAndConstantTest"]
+        B2["Switch2/3Test, DivTest, LoadTest"]
+        B3["MemcmpTest, StrcmpTest, StrstrTest<br/>SingleMemcmpTest, RepeatedMemcmp"]
+        B4["ShrinkValueProfileTest<br/>CxxStringEqTest"]
+    end
+    subgraph BYOC["bring-your-own-coverage · §2.2, §6.2, §6.3"]
+        direction TB
+        C1["TableLookupTest<br/>__libfuzzer_extra_counters"]
+        C2["OutOfProcessFuzzTarget<br/>+ SanCovDump"]
+        C3["NotinstrumentedTest<br/>SimulateEmptyModuleTest<br/>GcSectionsTest"]
+    end
+    subgraph ORACLE["oracles · §4.4, §7.2"]
+        direction TB
+        D1["NullDerefTest, StackOverflowTest<br/>DeepRecursionTest (stack depth)"]
+        D2["TimeoutTest, OutOfMemoryTest<br/>OneHugeAllocTest, LeakTest"]
+        D3["SignedIntOverflowTest<br/>ImplicitInteger*Test (UBSan)"]
+        D4["AcquireCrashStateTest<br/>UncaughtException, SigTrapTest"]
+    end
+    subgraph API["the five entrypoints · §1.3, §3.8"]
+        direction TB
+        E1["InitializeTest<br/>BogusInitializeTest"]
+        E2["CustomMutatorTest<br/>CustomCrossOverTest<br/>CustomCrossOverAndMutateTest"]
+        E3["Reject (returns -1)<br/>OverwriteInputTest"]
+        E4["AFLDriverTest<br/>StandaloneFuzzTargetMain"]
+    end
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class C1,C2 accent

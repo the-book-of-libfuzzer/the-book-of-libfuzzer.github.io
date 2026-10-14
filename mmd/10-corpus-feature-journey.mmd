@@ -1,0 +1,14 @@
+flowchart TD
+    R["RunOne: CollectFeatures yields feature F<br/>§1.6"] --> AF{"AddFeature(F)<br/>slot unowned,<br/>or we are smaller?"}
+    AF -->|"no"| SKIP["nothing happens<br/>(the feature already has a better owner)"]
+    AF -->|"yes, slot was empty"| NEW["NumAddedFeatures++<br/>AddRareFeature(F)"]
+    AF -->|"yes, we are smaller"| STEAL["steal ownership<br/>old owner NumFeatures--"]
+    STEAL --> EV{"old owner owns<br/>nothing now?"}
+    EV -->|"yes"| DEL["DeleteInput: evicted,<br/>file removed"]
+    EV -->|"no"| KEEP["old owner stays,<br/>logged as REDUCE"]
+    NEW --> UF["UpdateFeatureFrequency<br/>global + per-input counts"]
+    UF --> EN["UpdateEnergy<br/>Shannon entropy over rare features"]
+    EN --> DIST["UpdateCorpusDistribution<br/>piecewise_constant_distribution"]
+    DIST --> CH["ChooseUnitToMutate<br/>one weighted draw → §1.7"]
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class CH,DEL accent

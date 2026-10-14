@@ -1,0 +1,15 @@
+timeline
+    title Acts I-III — from a library to a data-aware engine
+    section 2015 · a library appears
+        Jan : Add a Fuzzer library d53b43fe117c : parallel jobs e8cee115707b
+        Jul-Aug : memcmp / strcmp hooks 0e776a2250e0 : mutators made public 242ca930e8f1
+        Sep-Oct : AFL-style dictionaries 9838b2be87a8 : TestOneInput returns int 20bb5e71b25b : -merge 9cc3b0ddb60f
+    section 2016 · the ABI settles
+        Jan : dictionary position hints 152ac7ad7072 : LLVMFuzzerInitialize aca7696f4d73
+        Feb : custom mutator C interface 22cc5e2375b8
+        Apr-Jun : -detect_leaks on by default 2fe9304d6266 : custom crossover 41d6683c39d3
+    section 2016 · learning to read data
+        Aug : value profile d46a59fac459 : trace_cmp split per width 524c3f32e716
+        Sep : -minimize_crash e2d0f636543f : trace-pc-guard as the coverage source a00b243c758b
+        Oct : -trace_cmp and the TORC a5f94fb6c9cb
+        Dec : crash-resistant merge 111e1d69e35a : len_control experiment 2a8440df70fd

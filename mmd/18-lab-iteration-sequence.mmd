@@ -1,0 +1,21 @@
+sequenceDiagram
+    autonumber
+    participant F as libFuzzer<br/>(harness, user space)
+    participant P as shared page<br/>(one physical page)
+    participant D as harden_local.ko<br/>(kernel)
+    participant K as KCOV<br/>(per-task buffer)
+    participant S as KASAN
+    F->>P: write the mutated bytes (no copy_from_user)
+    F->>K: cover[0] = 0 — reset the cursor
+    F->>D: ioctl(HARDEN_RUN)
+    D->>P: parse the page in 8-byte commands
+    D->>K: every executed basic block records its PC
+    alt OP_SET_RAW and idx >= HARDEN_SLOTS
+        D->>S: slots[idx] = val — out of bounds
+        S-->>F: KASAN report, then panic (kasan.fault=panic)
+    else in-bounds command
+        D-->>F: ioctl returns
+    end
+    K-->>F: cover[1..n] = the PCs that ran
+    F->>F: fold PCs into __libfuzzer_extra_counters
+    F->>F: new kernel edge ⇒ new feature ⇒ keep the input (§1.6)

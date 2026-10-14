@@ -1,0 +1,16 @@
+flowchart LR
+    subgraph US["user space"]
+        direction LR
+        U1["SanitizerCoverage pass"] --> U2["__sanitizer_cov_* callbacks<br/>+ inline counters"]
+        U2 --> U3["libFuzzer TracePC"]
+        U3 --> U4["corpus decisions"]
+    end
+    subgraph KS["kernel"]
+        direction LR
+        K1["CONFIG_KCOV<br/>(the same pass)"] --> K2["__sanitizer_cov_trace_pc"]
+        K2 --> K3["KCOV per-task ring buffer"]
+        K3 --> K4["syzkaller / AFL shim / your harness"]
+    end
+    U1 -.->|"same compiler, different consumer"| K1
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class U4,K4 accent

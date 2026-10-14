@@ -1,0 +1,118 @@
+/* print.css - paged-media styles (Vivliostyle / print)
+   Extracted from index.html; edit here, not there.
+   SPDX-License-Identifier: CC0-1.0 */
+
+/* ===================================================================
+   PAGED MEDIA — the Vivliostyle / print edition.
+   Screen layout above is untouched; everything here is @media print.
+   Build: npx @vivliostyle/cli build  (see README-publishing.md)
+   =================================================================== */
+@page {
+  size: 182mm 257mm;            /* JIS B5 — comfortable for 80-col code */
+  margin: 18mm 17mm 20mm;
+  @top-center {
+    content: string(chapter-title);
+    font: 400 8.5pt/1.2 system-ui, sans-serif; color: #666;
+    margin-bottom: 4mm;
+  }
+  @bottom-center {
+    content: counter(page);
+    font: 400 9pt/1.2 ui-monospace, monospace; color: #666;
+    margin-top: 4mm;
+  }
+}
+@page :first { @top-center { content: none; } @bottom-center { content: none; } }
+
+@media print {
+  :root {                       /* force the light palette: ink on paper */
+    --bg: #fff; --fg: #111; --muted: #555; --accent: #0a4f9e;
+    --code-bg: #f6f7f9; --code-border: #d8dee5; --hl: #fdf3c0;
+    --card: #fafbfc; --border: #e0e6ec;
+  }
+  body { max-width: none; margin: 0; padding: 0; font-size: 9.8pt; line-height: 1.5; }
+
+  /* running head follows the current chapter */
+  h2.chtitle { string-set: chapter-title content(text); }
+  .bookpart .ptitle { string-set: chapter-title content(text); }
+
+  /* parts and chapters start a page; a part banner starts a right-hand page */
+  .bookpart { break-before: right; }
+  .parthead:not(.movement) { break-before: page; }
+  .partclose { break-before: page; }
+  nav.toc { break-after: page; }
+
+  /* never orphan a heading from what it introduces */
+  h1, h2, h3, h4 { break-after: avoid; break-inside: avoid; }
+  p, li { orphans: 2; widows: 2; }
+
+  /* keep the book's units intact across page boundaries where possible */
+  figure, .card, .defn, .ex, .lo, .goals, .recap, .aside, .tablewrap,
+  .diagram-fig, details.ans { break-inside: avoid; }
+  pre { break-inside: avoid; }
+  /* …but a listing longer than a page must be allowed to split */
+  pre.long, .tablewrap.long { break-inside: auto; }
+
+  /* code: wrap rather than clip, since there is no horizontal scrollbar */
+  pre { white-space: pre-wrap; overflow-wrap: anywhere; overflow: visible;
+        font-size: 7.8pt; line-height: 1.42; padding: .7rem .8rem; }
+  pre code { font-size: inherit; }
+  code { font-size: .86em; }
+  table { font-size: 8.4pt; }
+  .tablewrap { overflow-x: visible; }
+  /* A caption must not be left behind on the previous page when its table
+     moves, which is what `break-after: avoid` buys. The .tablewrap already
+     has break-inside: avoid, so this only matters for the .long escape
+     hatch. */
+  table > caption { font-size: 7.8pt; break-after: avoid; padding-bottom: .3rem; }
+  /* …and the same for a code box and its label. */
+  .src { break-after: avoid; font-size: 7.6pt; margin: .9rem 0 .25rem; }
+  .src.tight { margin: .45rem 0 .2rem; }
+  /* Ink, not accent blue — the number has to stay legible in greyscale. */
+  .cnum { color: #000; }
+  .cnum::after { color: #555; }
+
+    /* Diagrams print as vector at whatever width the page allows - but the
+       height is capped, because `break-inside: avoid` on a block taller than
+       the page box makes a paged engine defer the figure and clip whatever
+       follows it. That is not theoretical: it silently ate 8 of the 20
+       figcaptions until tools/check_layout.mjs measured it. 165mm leaves room
+       for the caption inside a 219mm text block. */
+    .diagram-fig img { border: none; background: none; padding: 0;
+          max-width: 100%; max-height: 150mm; width: auto; height: auto; }
+    /* paper is never dark */
+    .diagram-fig .fig-dark { display: none !important; }
+    .diagram-fig .fig-light { display: block !important; }
+    .diagram-fig figcaption { font-size: 8pt; }
+
+  .byline { font-size: 9pt; }
+  /* a signature must not be stranded on a page of its own */
+  .signoff { break-inside: avoid; break-before: avoid; font-size: 9pt; }
+
+  /* the self-check boxes are for the reader's pencil */  .recap .check input { -webkit-appearance: none; appearance: none;
+        width: .78rem; height: .78rem; border: 1px solid var(--muted);
+        border-radius: 2px; }
+
+  /* a printed book cannot hide its answers behind a disclosure widget */
+  details.ans > summary { display: none !important; }
+  details.ans > .body { display: block !important; }
+  details.ans::before {
+    content: "Answer"; display: block; font: 700 7.5pt/1 ui-monospace, monospace;
+    letter-spacing: .08em; text-transform: uppercase; color: var(--accent);
+    margin: .2rem 0 .15rem;
+  }
+
+  /* links: keep them readable in ink, and give the TOC real page numbers */
+  a { color: inherit; text-decoration: none; }
+  .toc a { text-decoration: none; }
+  .toc ol li a::after { content: leader('.') ' ' target-counter(attr(href url), page); }
+  .toc { columns: 1; }
+  .toc-part a::after, .toc .subtitle a::after { content: none; }
+  /* ...but the Preface and the Epilogue are single destinations, not banners
+     spanning a range of sections, so they do get a page number. Written more
+     specifically than the rule above because it has to win. */
+  .toc p.toc-single a::after {
+    content: leader('.') ' ' target-counter(attr(href url), page); }
+  /* external references are worth printing in full */
+  .partclose a[href^="http"]::after, p a[href^="http"]::after,
+  td a[href^="http"]::after { content: none; }
+}

@@ -1,0 +1,15 @@
+# toolchain + build products
+node_modules/
+package-lock.json
+.vivliostyle/
+*.pdf
+
+# editing safety net (pre-revision copies of the book)
+index.html.bak
+index.html.pre-*
+
+# read-only reference checkouts that happen to live in this working tree.
+# preview.sh stages the book outside the repository because the Vivliostyle
+# dev server's file watcher walks these and exhausts the inotify budget.
+llvm-project
+vivliostyle.js/

@@ -1,0 +1,15 @@
+flowchart TD
+    A["main()<br/>FuzzerMain.cpp:19"] --> B["FuzzerDriver(argc, argv, CB)<br/>FuzzerDriver.cpp:652"]
+    B --> B1["EF->LLVMFuzzerInitialize(argc, argv)<br/>weak symbol, :657"]
+    B --> B2["parse flags; -merge / -minimize_crash /<br/>file args → RunOneTest, :331"]
+    B --> C["Fuzzer::Loop(CorporaFiles)<br/>FuzzerLoop.cpp:871"]
+    C -->|"while no timeout and runs under the cap"| D["MutateAndTestOne()<br/>FuzzerLoop.cpp:727"]
+    D -->|"for i in 0..mutate_depth"| D1["MD.Mutate(...)"]
+    D1 --> E["RunOne(Data, Size, ...)<br/>FuzzerLoop.cpp:510"]
+    E --> F["ExecuteCallback(Data, Size)<br/>FuzzerLoop.cpp:597"]
+    F --> G["CBRes = CB(DataCopy, Size)<br/>your LLVMFuzzerTestOneInput"]
+    E --> H["TPC.CollectFeatures(...)<br/>FuzzerTracePC.h:239"]
+    H --> I["Corpus.AddToCorpus(...)<br/>only if a new feature appeared"]
+    I -.->|"next round draws from the corpus"| D
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class G,I accent

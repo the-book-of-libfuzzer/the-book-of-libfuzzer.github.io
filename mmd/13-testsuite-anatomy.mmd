@@ -1,0 +1,26 @@
+flowchart TB
+    subgraph SRC["compiler-rt sources"]
+        direction TB
+        SPEC["test/fuzzer/*.cpp<br/>113 example targets<br/>one puzzle each"]
+        TST["test/fuzzer/*.test<br/>144 lit scripts<br/>RUN: + CHECK:"]
+        CFG["test/fuzzer/lit.cfg.py<br/>substitutions: %cpp_compiler,<br/>%msan_compiler, %run, %libfuzzer_src"]
+        UNIT["lib/fuzzer/tests/<br/>FuzzerUnittest.cpp (42)<br/>FuzzedDataProviderUnittest.cpp (17)"]
+    end
+    subgraph RUN["what ninja check-fuzzer does"]
+        direction TB
+        L["lit expands the substitutions"]
+        C["clang -O2 -gline-tables-only<br/>-fsanitize=address,fuzzer"]
+        B["a real fuzzer binary in %t"]
+        X["run it with the flags the test chose"]
+        FC["FileCheck asserts on stdout/stderr"]
+        L --> C --> B --> X --> FC
+    end
+    G["gtest binaries<br/>Fuzzer-x86_64-Test"]
+    SPEC --> C
+    TST --> L
+    CFG --> L
+    UNIT --> G
+    FC --> V{"PASS / FAIL"}
+    G --> V
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class V accent

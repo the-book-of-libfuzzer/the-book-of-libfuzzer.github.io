@@ -1,0 +1,10 @@
+flowchart LR
+    A["instrumented module regions<br/>8 × total inline counters<br/>(one block per DSO, page-aligned)"]
+    B["__libfuzzer_extra_counters<br/>8 × array size<br/>§2.2 — KCOV lands here"]
+    C["value profile<br/>ValueProfileMap.SizeInBits()<br/>= 65536, only if -use_value_profile=1"]
+    D["stack depth<br/>StackDepthStepFunction(max)<br/>one feature per depth band"]
+    A -->|"FirstFeature += 8 × size"| B
+    B -->|"FirstFeature += 8 × size"| C
+    C -->|"FirstFeature += 65536"| D
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class B accent

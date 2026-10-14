@@ -1,0 +1,22 @@
+timeline
+    title Acts IV-VI — instrumentation replaced, scheduling rethought, then maintenance
+    section 2017 · new instrumentation, new home
+        Mar : user-provided coverage 6ca44f91617d
+        Apr : clang -fsanitize=fuzzer f2fc5b068e01
+        Jun-Aug : inline-8bit-counters f2d4dcb8884f : pc-table b2a1eba2f549 : stack-depth 5c7fc76983f6
+        Aug-Sep : moved to compiler-rt 10ab2ace1359 : default switched to inline counters a523135f97b7
+    section 2018-2019 · scheduling and isolation
+        2018-05 : data-flow tracer f489e2bfef7f : -focus_function e9c6f06cce2c
+        2018-08 : weighted mutation added 5a9baa330caf then REVERTED 8c95b48ba273
+        2019-01 : trace-pc-guard support removed 50a1c6971277
+        2019-02 : -fork=1 f762a11544b7 : -fork=N 60c5ded2692d
+        2019-06 : FuzzedDataProvider 10ed68189a85
+    section 2020-2022 · the last big feature
+        2020-05 : Entropic e2e38fca64e4
+        2020-07 : own interceptors 831ae45e3dc6 : LLVMFuzzerRunDriver 34ddf0b2b040
+        2020-09 : Entropic on by default f3c2e0bcee64
+        2022-10 : docs declare maintenance mode ec96aea846ce
+    section 2025-2026 · still moving
+        2025-07 : SIGTRAP capture 33cc58f46f0c
+        2026-09 : leak re-runs excluded from -runs 3ff11b27bbd8
+        2026-10 : -stale_corpus_timeout af2d76922b54

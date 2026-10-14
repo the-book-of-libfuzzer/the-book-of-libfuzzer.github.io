@@ -1,0 +1,13 @@
+flowchart LR
+    subgraph AUTO["AUTOMATIC — ordinary user-space target"]
+        direction LR
+        A1["compiler writes counters<br/>inline, no call"] --> A2["same address space"]
+        A2 --> A3["CollectFeatures reads them<br/>you write 0 lines of coverage code"]
+    end
+    subgraph BYOC["BRING-YOUR-OWN-COVERAGE — KCOV target"]
+        direction LR
+        B1["kernel writes PCs to a ring buffer<br/>CONFIG_KCOV instrumentation"] -->|"syscall boundary"| B2["YOU copy them into<br/>__libfuzzer_extra_counters"]
+        B2 --> B3["CollectFeatures reads that array<br/>§2.2"]
+    end
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class A3,B3 accent

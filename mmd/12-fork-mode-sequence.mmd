@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant P as parent (-fork=N)<br/>runs no target code
+    participant C as child job n
+    participant M as merge control file
+    participant D as corpus dir
+    P->>P: CreateNewJob: strip -fork/-runs, add -reload=0,<br/>max_total_time = min(300, n)
+    P->>C: spawn with sqrt(N) seeds, private corpus + features dir
+    C->>C: the whole Chapter 1 loop, in its own process
+    alt the child finds a bug
+        C-->>P: exit 77 (crash) / 70 (timeout) / 71 (OOM)
+        P->>P: classify: IgnoreCrashes? IgnoreOOMs? IgnoreTimeouts?
+    else the child times out cleanly
+        C-->>P: exit 0
+    end
+    P->>M: CrashResistantMerge over the child's new files
+    M-->>P: which files carry features the main corpus lacks
+    P->>D: copy just those into the shared corpus
+    P->>C: spawn job n+1 with a fresh subset
+    Note over P,D: a crash kills a child, never the campaign

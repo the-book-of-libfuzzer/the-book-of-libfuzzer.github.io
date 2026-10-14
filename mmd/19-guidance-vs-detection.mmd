@@ -1,0 +1,9 @@
+flowchart TB
+    G["GUIDANCE<br/>KCOV / SanitizerCoverage<br/>which code did we reach?"]
+    D["DETECTION<br/>KASAN / KMSAN / KCSAN / UBSAN<br/>did reaching it corrupt something?"]
+    B["a bug is FOUND only when BOTH fire on the same input"]
+    G --> B
+    D --> B
+    G -.->|"steers the input in"| D
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class B accent

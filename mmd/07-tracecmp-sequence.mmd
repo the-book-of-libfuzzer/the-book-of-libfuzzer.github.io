@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    participant C as SanitizerCoverage<br/>(compile time)
+    participant T as Target<br/>if (x == 0xCAFEF00D)
+    participant R as TracePC::HandleCmp
+    participant K as TORC4 + ValueProfileMap
+    participant M as MutationDispatcher
+    C->>T: emit __sanitizer_cov_trace_const_cmp4(0xCAFEF00D, x)
+    Note over C,T: one call planted beside the branch
+    T->>R: run N: callback fires with both operands
+    R->>K: TORC4.Insert(Arg1 ^ Arg2, 0xCAFEF00D, x)
+    R->>K: AddValue(PC*128 + HammingDistance)
+    Note over K: "3 of 4 bytes match" is already a new feature
+    M->>K: Mutate_AddWordFromTORC: draw a recent (A, B) pair
+    K-->>M: (0xCAFEF00D, x)
+    M->>T: find x's bytes in the input, overwrite with 0xCAFEF00D
+    T->>R: run N+1: the compare is TRUE, a new edge is covered
+    R->>K: input saved to the corpus

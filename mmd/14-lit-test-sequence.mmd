@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant U as you <br/>ninja check-fuzzer
+    participant L as lit
+    participant K as lit.cfg.py
+    participant C as clang
+    participant T as the specimen binary
+    participant F as FileCheck
+    U->>L: run test/fuzzer/simple.test
+    L->>K: expand %cpp_compiler, %run, %S, %t
+    K-->>L: clang ... -fsanitize=address,fuzzer -O2 -gline-tables-only
+    L->>C: RUN line 1 — compile SimpleTest.cpp to %t-SimpleTest
+    C-->>L: exit 0 (a non-zero exit here fails the test immediately)
+    L->>T: RUN line 2 — not %run %t-SimpleTest
+    T->>T: the real Chapter 1 loop: mutate, execute, collect features
+    T-->>L: prints BINGO, Found the target, exiting - then exit(0)
+    Note over L,T: the not wrapper inverts it — the engine MUST find the puzzle
+    L->>F: pipe stderr+stdout into FileCheck simple.test
+    F-->>L: "CHECK: BINGO" matched
+    L-->>U: PASS

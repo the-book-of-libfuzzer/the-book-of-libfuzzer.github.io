@@ -1,0 +1,177 @@
+/* book.css - screen styles for You Shall Know LibFuzzer
+   Extracted from index.html; edit here, not there.
+   SPDX-License-Identifier: CC0-1.0 */
+
+:root {
+  --bg: #ffffff; --fg: #1a1d21; --muted: #5c6570; --accent: #0b63c5;
+  --code-bg: #f4f6f8; --code-border: #dde3e9; --hl: #fff3c4;
+  --card: #f8fafc; --border: #e2e8f0;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #14171b; --fg: #e6e9ec; --muted: #9aa5b1; --accent: #6cb2ff;
+    --code-bg: #1d2228; --code-border: #313842; --hl: #4a3f13;
+    --card: #1a1f25; --border: #2b323b;
+  }
+}
+body { background: var(--bg); color: var(--fg); font: 17px/1.65 system-ui, sans-serif;
+       max-width: 60rem; margin: 0 auto; padding: 2rem 1.25rem 6rem; }
+h1 { font-size: 1.9rem; line-height: 1.25; margin-bottom: .25rem; }
+h2 { font-size: 1.4rem; margin-top: 3rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+h3 { font-size: 1.1rem; margin-top: 2rem; }
+.subtitle { color: var(--muted); margin-top: 0; }
+a { color: var(--accent); }
+code { font: .85em/1.5 ui-monospace, "Cascadia Code", Menlo, monospace;
+       background: var(--code-bg); border: 1px solid var(--code-border);
+       border-radius: 4px; padding: .1em .35em; }
+pre { background: var(--code-bg); border: 1px solid var(--code-border); border-radius: 8px;
+      padding: 1rem; overflow-x: auto; line-height: 1.5; }
+pre code { background: none; border: none; padding: 0; font-size: .82rem; }
+.src { display: block; font: .75rem ui-monospace, monospace; color: var(--muted);
+       margin: 1.25rem 0 .35rem; }
+/* Inside a .defn/.aside the <pre> carries an inline tight margin; the label
+   has to match it or it reopens the gap that inline style closed. */
+.src.tight { margin: .6rem 0 .3rem; }
+/* The block number: "Figure 3.2", "List 6.14", "Table 1.1". Baked into the
+   markup by tools/number.py, not a CSS counter — see that file for why.
+   Sans-serif on purpose: .src is monospace, and a monospace number reads as
+   part of the file path that usually follows it. */
+.cnum { font-family: system-ui, sans-serif; font-weight: 600; font-size: .95em;
+        color: var(--accent); white-space: nowrap; }
+.cnum::after { content: " ·"; color: var(--muted); font-weight: 400; }
+.card { background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+        padding: 1rem 1.25rem; margin: 1.25rem 0; }
+.card b:first-child { color: var(--accent); }
+table { border-collapse: collapse; width: 100%; font-size: .92rem; margin: 1rem 0; }
+th, td { text-align: left; padding: .45rem .7rem; border-bottom: 1px solid var(--border); vertical-align: top; }
+th { color: var(--muted); font-weight: 600; }
+.tablewrap { overflow-x: auto; }
+/* A table caption sits above its table and reads like a figcaption, so it is
+   styled like one: small, muted, left-aligned with the first column. */
+table > caption { caption-side: top; text-align: left; font-size: .82rem;
+        color: var(--muted); line-height: 1.45; padding: 0 0 .4rem; }
+
+.diagram-fig { margin: 1.5rem 0; }
+.diagram-fig figcaption { font-size: .82rem; color: var(--muted); text-align: center;
+        margin-top: .5rem; line-height: 1.45; }
+/* Figures are static SVG built from mmd/ by tools/build-figures.mjs.
+   <picture> picks the dark variant; both ship in img/. */
+/* Two <img>s per figure, one per colour scheme, toggled below.
+   NOT <picture>: Vivliostyle 2.37 drops a <picture> outright when the figure
+   has to move to the next page, taking the figcaption with it. Measured with
+   tools/check_layout.mjs and a minimal reproducer; a plain <img> moves
+   correctly. */
+.diagram-fig img { display: block; margin: 0 auto; max-width: 100%;
+        height: auto; background: var(--code-bg);
+        border: 1px solid var(--code-border); border-radius: 8px;
+        padding: .75rem; box-sizing: border-box; }
+.diagram-fig .fig-dark { display: none; }
+@media (prefers-color-scheme: dark) {
+  .diagram-fig .fig-light { display: none; }
+  .diagram-fig .fig-dark { display: block; }
+}
+.flow { font: .85rem ui-monospace, monospace; background: var(--code-bg);
+        border: 1px solid var(--code-border); border-radius: 8px; padding: 1rem 1.25rem;
+        overflow-x: auto; white-space: pre; }
+.k { color: var(--accent); font-weight: 600; }
+.cm { color: var(--muted); }
+mark { background: var(--hl); color: inherit; border-radius: 3px; padding: 0 .15em; }
+.toc { columns: 2; column-gap: 2rem; font-size: .95rem; }
+.toc a { text-decoration: none; }
+@media (max-width: 40rem) { .toc { columns: 1; } }
+/* front and end matter: the byline on the title block, and the sign-off that
+   closes the Preface and the Epilogue. */
+.byline { color: var(--muted); font-size: .95rem; margin: .4rem 0 0; }
+.byline a { text-decoration: none; }
+.signoff { margin: 2rem 0 .5rem; padding-top: .9rem;
+           border-top: 1px solid var(--border); font-size: .95rem; }
+.signoff b { display: block; color: var(--fg); }
+.signoff .where { display: block; margin-top: .2rem; color: var(--muted);
+           font: .78rem/1.5 ui-monospace, monospace; }
+.parthead { margin-top: 4rem; padding: 1.5rem 1.5rem 1.25rem; border-radius: 10px;
+            background: linear-gradient(135deg, var(--card), var(--code-bg));
+            border: 1px solid var(--border); }
+.parthead .eyebrow { font: .72rem/1 ui-monospace, monospace; letter-spacing: .12em;
+                     text-transform: uppercase; color: var(--accent); }
+.parthead h2 { border: none; margin: .4rem 0 .5rem; padding: 0; font-size: 1.6rem; }
+.parthead h2.chtitle { font-size: 1.75rem; margin: .3rem 0 .55rem; }
+.parthead.movement { margin-top: 2.75rem; padding: 1rem 1.25rem .85rem;
+                     background: var(--code-bg); border-style: dashed; }
+.parthead.movement .eyebrow { color: var(--muted); }
+.parthead, .bookpart { scroll-margin-top: .8rem; }
+.parthead.movement h2 { font-size: 1.3rem; }
+.lo { background: var(--card); border: 1px solid var(--border);
+      border-left: 4px solid var(--accent); border-radius: 6px;
+      padding: .9rem 1.15rem; margin: 1.25rem 0; font-size: .95rem; }
+.lo h4 { margin: 0 0 .5rem; font-size: .8rem; letter-spacing: .08em;
+         text-transform: uppercase; color: var(--accent); }
+.lo ul { margin: 0; padding-left: 1.2rem; }
+.defn { border: 1px dashed var(--code-border); border-radius: 6px;
+        padding: .75rem 1.1rem; margin: 1.25rem 0; background: var(--code-bg); }
+.defn b:first-child { color: var(--accent); }
+.aside { border-left: 3px solid var(--code-border); margin: 1.25rem 0;
+         padding: .35rem 0 .35rem 1rem; color: var(--muted); font-size: .93rem; }
+.aside b { color: var(--fg); }
+.ex { background: var(--card); border: 1px solid var(--border); border-radius: 8px;
+      padding: 1rem 1.25rem; margin: 1.25rem 0; }
+.ex h4 { margin: 0 0 .6rem; font-size: .85rem; letter-spacing: .06em;
+         text-transform: uppercase; color: var(--accent); }
+.ex ol { margin: 0; padding-left: 1.3rem; }
+.ex li { margin: .5rem 0; }
+.tag { display: inline-block; font: .68rem/1 ui-monospace, monospace; color: var(--muted);
+       border: 1px solid var(--border); border-radius: 999px; padding: .28em .6em;
+       margin-right: .35em; vertical-align: middle; }
+/* chapter opener: "what you'll be able to do after this chapter" */
+.goals { background: var(--card); border: 1px solid var(--border);
+         border-top: 4px solid var(--accent); border-radius: 8px;
+         padding: 1rem 1.25rem 1.1rem; margin: 1.5rem 0; }
+.goals .glabel { display: block; font-size: .72rem; letter-spacing: .1em;
+         text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: .4rem; }
+.goals p.lead { margin: .1rem 0 .55rem; font-weight: 600; }
+.goals ul { margin: 0; padding-left: 1.2rem; }
+.goals li { margin: .35rem 0; }
+/* chapter closer: keyword reminder + self-check */
+.recap { background: var(--code-bg); border: 1px solid var(--code-border);
+         border-radius: 8px; padding: 1rem 1.25rem 1.15rem; margin: 2rem 0 1rem; }
+.recap .glabel { display: block; font-size: .72rem; letter-spacing: .1em;
+         text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: .3rem; }
+.recap h4 { margin: 1.1rem 0 .5rem; font-size: .82rem; letter-spacing: .03em; color: var(--fg); }
+.recap h4:first-of-type { margin-top: .3rem; }
+.recap .kw .tag { margin-bottom: .4em; }
+.recap .check { list-style: none; margin: .2rem 0 0; padding: 0; }
+.recap .check li { margin: .45rem 0; }
+.recap .check label { display: flex; gap: .55rem; align-items: flex-start; cursor: pointer; }
+.recap .check input { margin-top: .34rem; flex: 0 0 auto; width: .95rem; height: .95rem;
+         accent-color: var(--accent); }
+.recap .check input:checked + span { color: var(--muted); }
+/* two-level hierarchy: top-level Part banner + Part opener/closer */
+.bookpart { margin: 3.5rem 0 1.75rem; padding: 1.5rem 1.6rem 1.6rem;
+            border: 2px solid var(--accent); border-radius: 10px; background: var(--card); }
+.bookpart .plabel { display: block; font-size: .82rem; letter-spacing: .18em;
+            text-transform: uppercase; color: var(--accent); font-weight: 800; }
+.bookpart .ptitle { font-size: 1.55rem; font-weight: 700; line-height: 1.25; margin: .2rem 0 .55rem; }
+.bookpart > p { margin: .3rem 0 0; color: var(--muted); }
+.bookpart .know { margin-top: 1.1rem; }
+.bookpart .know .glabel { display: block; font-size: .72rem; letter-spacing: .1em;
+            text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: .35rem; }
+.bookpart .know ul { margin: 0; padding-left: 1.2rem; }
+.bookpart .know li { margin: .35rem 0; }
+.partclose { margin: 2.5rem 0 1rem; padding: 1.3rem 1.6rem 1.4rem; border-radius: 10px;
+             background: var(--code-bg); border: 1px solid var(--code-border);
+             border-top: 3px solid var(--accent); }
+.partclose .plabel { display: block; font-size: .72rem; letter-spacing: .12em;
+             text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: .2rem; }
+.partclose h3 { margin: .2rem 0 .5rem; }
+details.ans { margin: .35rem 0 .2rem; }
+details.ans summary { cursor: pointer; color: var(--accent); font-weight: 600; font-size: .9rem;
+             list-style: none; }
+details.ans summary::-webkit-details-marker { display: none; }
+details.ans summary::before { content: "\25B8  "; }
+details.ans[open] summary::before { content: "\25BE  "; }
+details.ans .body { color: var(--muted); font-size: .95rem; margin: .4rem 0 .2rem; }
+.toc-part { margin: 1.5rem 0 .35rem; font-size: .82rem; font-weight: 800; letter-spacing: .08em;
+            text-transform: uppercase; color: var(--accent);
+            border-top: 2px solid var(--accent); padding-top: .55rem; }
+.toc ol { list-style: none; padding-left: .2rem; }
+.toc .tn { display: inline-block; min-width: 2.4em; color: var(--muted);
+          font-weight: 700; font-variant-numeric: tabular-nums; }

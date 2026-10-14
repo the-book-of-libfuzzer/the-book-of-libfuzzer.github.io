@@ -1,0 +1,25 @@
+flowchart LR
+    subgraph CT["compile time"]
+        direction TB
+        P["SanitizerCoverage.cpp<br/>the instrumentation pass"] --> PC["__sanitizer_cov_* calls<br/>+ inline counter++ in the target"]
+    end
+    subgraph RT["run time, per input"]
+        direction TB
+        E["ExecuteCallback §1.5<br/>TPC.ResetMaps() zeroes everything"] --> R["CB(Data, Size) runs the target"]
+        R --> S1["8-bit counters"]
+        R --> S2["HandleCmp → TORC §3.3"]
+        R --> S3["value profile bitset"]
+        S1 --> CF["CollectFeatures §1.6"]
+        S2 --> CF
+        S3 --> CF
+        CF -->|"new feature?"| AC["Corpus.AddToCorpus"]
+    end
+    subgraph FB["feedback"]
+        direction TB
+        M["MutateAndTestOne §1.7"] --> MT["Mutate_AddWordFromTORC §3.4<br/>splices a TORC operand into the input"]
+    end
+    PC --> E
+    AC --> M
+    MT -.->|"next input"| E
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class CF,MT accent

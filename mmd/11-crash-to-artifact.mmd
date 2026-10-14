@@ -1,0 +1,18 @@
+sequenceDiagram
+    autonumber
+    participant L as Fuzzer::ExecuteCallback
+    participant G as CurrentUnitData<br/>(global)
+    participant T as the target
+    participant S as ASan / signal
+    participant H as CrashCallback<br/>or DeathCallback
+    participant F as the filesystem
+    L->>G: memcpy(CurrentUnitData, Data, Size), then set CurrentUnitSize
+    L->>T: CBRes = CB(DataCopy, Size)
+    T->>S: out-of-bounds write hits a redzone
+    S->>S: __sanitizer_acquire_crash_state() — first reporter wins
+    S->>H: death callback / SIGSEGV handler
+    H->>G: read CurrentUnitData, CurrentUnitSize
+    H->>F: WriteUnitToFileWithPrefix(..., "crash-")
+    H->>F: print "MS: ..." mutation sequence + hex + ASCII
+    H->>H: PrintFinalStats() and _Exit(77)
+    Note over L,F: the normal path never reaches H — it clears CurrentUnitSize and returns

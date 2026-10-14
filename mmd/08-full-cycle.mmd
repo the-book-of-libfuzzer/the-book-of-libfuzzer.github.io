@@ -1,0 +1,21 @@
+flowchart TB
+    subgraph CT["COMPILE TIME"]
+        direction TB
+        I1["8-bit counter + PC-table on every edge<br/>control-flow signal"]
+        I2["trace_cmp beside every comparison<br/>data-flow signal"]
+    end
+    subgraph RUN["RUN TIME, one input"]
+        direction TB
+        PK["§1.7 pick a parent and mutate it"] --> EX["§1.5 ExecuteCallback<br/>ResetMaps() zeroes counters, TORC, extra counters"]
+        EX --> TG["the target runs; callbacks fire"]
+        TG --> CF["§1.6 CollectFeatures"]
+        CF -->|"new feature?"| AD["Corpus.AddToCorpus — keep the input"]
+        AD --> MU["§3.4 Mutate_AddWordFromTORC<br/>splice a recent (A,B) into the input"]
+        MU --> PK
+    end
+    EXT["KCOV / Pishi → __libfuzzer_extra_counters<br/>§2.2 — coverage the compiler never emitted"]
+    I1 --> EX
+    I2 --> EX
+    EXT ==>|"enters at the same box"| CF
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class CF,EXT accent

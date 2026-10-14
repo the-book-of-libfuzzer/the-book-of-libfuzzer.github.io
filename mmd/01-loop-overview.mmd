@@ -1,0 +1,10 @@
+flowchart LR
+    C["Corpus<br/>seeds + kept inputs"] --> M["Mutate()<br/>§1.7 · evolutionary"]
+    M --> X["CB(Data, Size)<br/>§1.5 · in-process"]
+    X --> F["CollectFeatures()<br/>§1.6 · coverage-guided"]
+    F --> Q{"new feature?"}
+    Q -->|"yes"| K["AddToCorpus<br/>survivor kept"]
+    Q -->|"no"| Z["discarded"]
+    K --> C
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class X accent

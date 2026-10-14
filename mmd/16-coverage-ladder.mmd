@@ -1,0 +1,10 @@
+flowchart TB
+    R1["Rung 1 · CounterTest.cpp<br/>coverage: the compiler, in-process<br/>you write: the target only"]
+    R2["Rung 2 · TableLookupTest.cpp<br/>coverage: your own code, in-process<br/>you write: a counters array you bump by hand"]
+    R3["Rung 3 · OutOfProcessFuzzTarget.cpp + SanCovDump.cpp<br/>coverage: a separate process, via a file<br/>you write: the marshalling"]
+    R4["Rung 4 · tools/harden/sample/local.c<br/>coverage: the kernel, via an mmap'd ring buffer<br/>you write: the KCOV loop — Chapter 6"]
+    R1 -->|"learn the array rules: uint8_t,<br/>the magic section, zeroed every run (§6.2)"| R2
+    R2 -->|"learn the transport: who fills it,<br/>and when (§6.3)"| R3
+    R3 -->|"swap the file for /sys/kernel/debug/kcov<br/>and system() for ioctl() (§6.4)"| R4
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class R4 accent

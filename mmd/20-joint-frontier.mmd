@@ -1,0 +1,16 @@
+flowchart LR
+    subgraph COMP["COMPILER — proposed, PR #201410"]
+        direction TB
+        E1["SanitizerCoverage emits<br/>__sanitizer_cov_trace_args<br/>__sanitizer_cov_trace_ret"]
+        E2["struct field offsets<br/>+ FNV-1a name hash<br/>via DICompositeType, needs -g"]
+        E1 --- E2
+    end
+    subgraph CONS["CONSUMERS"]
+        direction TB
+        K["kernel KCOV dataflow mode<br/>K5 — kcov_dataflow.c, patch series v4<br/>struct-field values for corruption analysis"]
+        L["libFuzzer mutator<br/>L5 — still open<br/>dataflow-guided, like MutateWithMask/DFSan"]
+    end
+    E1 --> K
+    E1 --> L
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class K accent
