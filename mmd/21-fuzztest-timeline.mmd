@@ -1,0 +1,22 @@
+timeline
+    title FuzzTest 2022-2026 — a fuzz-test front-end that ended up owning its engine
+    section 2022 · Act I, an in-process engine inside GoogleTest
+        2022-09 : public import 658be28962db : FlatMap 46911f51088e : --config=libfuzzer 878a7d8c60ba
+        2022-10..12 : --fuzz_for a965fe3d521a : FUZZTEST_PRNG_SEED 054b0edd8f87
+    section 2023 H1 · Act II, the squash, and Act III begins
+        2023-01..04 : type erasure ab5d4c4c1680 : CMake 1a254dcfa76f : WithSeeds 0130e1e775b9
+        2023-04-19 : Centipede squashed in a15547ee04e3 : Kostya's first commit cb427de27de4
+        2023-05 : domain_core split eaef749d7d6e : SetExecutionCoverage b9d7af4e7dc5 : FuzzTestMutator in Centipede fc4c196455c3
+        2023-06 : multiple user feature domains 89240957fb81
+    section 2023 H2 · Act III, one engine underneath
+        2023-08 : RunnerCallbacks 756bd06c3a4a : Centipede adaptor 52d3671a3d0c
+        2023-10 : centipede_integration flag, default False c7db83ddcdb8
+        2023-11 : corpus database 7c9e6b8a67ae : Riegeli 0be6134758e3
+    section 2024-2025 · Act IV, one binary is controller and runner
+        2024-05 : execv to Centipede b603970bc044 : corpus DB in CentipedeMain 3e415f20f15b
+        2024-10 : --config=fuzztest-experimental c942c2949ab4 : --jobs dfb10bca30e4
+        2025-04..05 : crash IDs 81d76d6b1d3e : reproducers d9103dfcf5f2 : Rust 741fd4068ec6
+    section 2025-2026 · Act V, consolidation
+        2025-06 : libFuzzer-mode e2e tests f1e26613f669
+        2025-11 : presence-marker symbols removed 14f2c567c75a
+        2026-10 : InitFuzzTest check 305237f07988 rolled back ed1ae14a62f9

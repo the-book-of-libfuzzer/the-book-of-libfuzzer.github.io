@@ -1,0 +1,11 @@
+flowchart LR
+    A["kUnknown<br/>0"] --> B["kPCs<br/>one per sancov PC"]
+    B --> C["k8bitCounters<br/>PC x counter bucket"]
+    C --> D["kDataFlow<br/>load and store sites"]
+    D --> E["kCMP family<br/>Eq, ModDiff,<br/>Hamming, DiffLog"]
+    E --> F["kCallStack,<br/>kBoundedPath,<br/>kPCPair"]
+    F --> G["kUserDomains 0..15<br/>the extra-features<br/>section lands here"]
+    G --> H["kLastDomain"]
+    N["each domain spans kDomainSize = 2^27 ids<br/>feature = domain.begin + id mod 2^27"] -.-> G
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class G accent

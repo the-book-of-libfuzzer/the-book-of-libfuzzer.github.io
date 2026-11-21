@@ -1,0 +1,13 @@
+flowchart TB
+    T["FUZZ_TEST(Suite, Property)<br/>.WithDomains(...) .WithSeeds(...)"] --> R["RegistrationToken<br/>registry.h INTERNAL_FUZZ_TEST"]
+    D["domains: Arbitrary, InRange, ElementOf,<br/>StructOf, VectorOf, VariantOf, FlatMap,<br/>InGrammar, protobuf"] -->|"the input type"| R
+    R --> G["GoogleTest adaptor<br/>one TEST per property"]
+    G --> M{"build-time choice<br/>GetFuzzTestFuzzerFactory"}
+    M -->|"default<br/>--config=fuzztest"| L["FuzzTestFuzzerImpl<br/>legacy in-process engine<br/>runtime.cc"]
+    M -->|"FUZZTEST_USE_CENTIPEDE<br/>--config=fuzztest-experimental"| C["CentipedeFuzzerAdaptor<br/>out-of-process Centipede<br/>centipede_adaptor.cc"]
+    M -->|"FUZZTEST_COMPATIBILITY_MODE<br/>--config=libfuzzer"| F["FuzzTestExternalEngineAdaptor<br/>libFuzzer drives the loop<br/>compatibility_mode.cc"]
+    L --> X["the same domains mutate in every engine:<br/>in-process, in the Centipede runner,<br/>or as libFuzzer's custom mutator"]
+    C --> X
+    F --> X
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class M,D accent

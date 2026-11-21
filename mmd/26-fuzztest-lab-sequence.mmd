@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    participant R as runner
+    participant P as shared page
+    participant D as harden_local
+    participant K as KCOV buffer
+    participant L as /dev/kmsg
+    participant C as controller
+    R->>R: domain hands over std::vector of Cmd, already well-formed
+    R->>P: ToPage: u16 count, then 8-byte commands
+    R->>L: drain, so only this input's records count
+    R->>K: cover[0] = 0
+    R->>D: ioctl(HARDEN_RUN)
+    D->>K: each basic block records its PC
+    alt SET_RAW, flag 0xA5, idx at least 16
+        D->>L: BUG: KASAN slab-out-of-bounds, kernel keeps running
+    end
+    K-->>R: cover[1..n]
+    R->>R: PCs and PC pairs into the extra-features section, user domains 0 and 1
+    R->>L: read new records
+    alt a KASAN record appeared
+        R->>R: EXPECT_FALSE fails, the property fails
+        R-->>C: failure, input index
+        C->>R: re-run alone, kasan_multi_shot reports again
+        C->>C: save crashes.000000/sha1 on the host
+    else clean
+        R-->>C: features for this input
+    end

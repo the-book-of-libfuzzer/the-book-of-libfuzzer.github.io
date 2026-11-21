@@ -110,6 +110,47 @@
   <li><span class="tn">9.4</span> <a href="#thin-wrap">Keeping an existing <code>main()</code>: <code>LLVMFuzzerRunDriver</code> + <code>--wrap=main</code></a></li>
   <li><span class="tn">9.5</span> <a href="#thin-fork">Crash survival and compare replay: <code>-fork=1</code> and cmplog for free</a></li>
 </ol>
+<p class="toc-part"><a href="#part-3">Part 3 &middot; Theory: FuzzTest</a></p>
+<p class="subtitle" style="margin:.75rem 0 .25rem;font-weight:600;"><a href="#chapter-10">Chapter 10 — The core idea: a fuzz test is a property over typed inputs</a></p>
+<ol start="64">
+  <li><span class="tn">10.1</span> <a href="#ft-core">From fuzz target to fuzz test</a></li>
+  <li><span class="tn">10.2</span> <a href="#ft-contract">The contract: <code>FUZZ_TEST</code> and registration</a></li>
+  <li><span class="tn">10.3</span> <a href="#ft-domains">Domains: the type is the grammar</a></li>
+  <li><span class="tn">10.4</span> <a href="#ft-engines">Three engines behind one macro</a></li>
+  <li><span class="tn">10.5</span> <a href="#ft-legacy">The legacy engine: libFuzzer's loop, typed</a></li>
+  <li><span class="tn">10.6</span> <a href="#ft-vs-libfuzzer">libFuzzer and FuzzTest, side by side</a></li>
+</ol>
+<p class="subtitle" style="margin:.75rem 0 .25rem;font-weight:600;"><a href="#chapter-11">Chapter 11 — Why FuzzTest absorbed Centipede: the design history in five acts</a></p>
+<ol start="70">
+  <li><span class="tn">11.1</span> <a href="#ft-act1">Act I (2022): a libFuzzer-shaped engine inside GoogleTest</a></li>
+  <li><span class="tn">11.2</span> <a href="#ft-act2">Act II (April 2023): the squash</a></li>
+  <li><span class="tn">11.3</span> <a href="#ft-act3">Act III (2023): domains become Centipede's mutator</a></li>
+  <li><span class="tn">11.4</span> <a href="#ft-act4">Act IV (2023&ndash;2025): one binary is controller and runner</a></li>
+  <li><span class="tn">11.5</span> <a href="#ft-act5">Act V (2025&ndash;2026): consolidation, and what is still not true</a></li>
+  <li><span class="tn">11.6</span> <a href="#ft-centipede">Centipede up close: controller, runner, fork server</a></li>
+  <li><span class="tn">11.7</span> <a href="#ft-features">Features, domains and rarity: Centipede's coverage model</a></li>
+  <li><span class="tn">11.8</span> <a href="#ft-synthesis">The core design, restated</a></li>
+</ol>
+<p class="toc-part"><a href="#part-4">Part 4 &middot; Practical lab &amp; contribution: FuzzTest</a></p>
+<p class="subtitle" style="margin:.75rem 0 .25rem;font-weight:600;"><a href="#chapter-12">Chapter 12 — The FuzzTest kernel lab: typed harnesses, Centipede features, and oracles you write</a></p>
+<ol start="78">
+  <li><span class="tn">12.1</span> <a href="#ftlab-layout">The layout: what Part 4 adds to the lab tree</a></li>
+  <li><span class="tn">12.2</span> <a href="#ftlab-build">Building: two scripts and three traps</a></li>
+  <li><span class="tn">12.3</span> <a href="#ftlab-userspace">Warm-up: one parser, three properties</a></li>
+  <li><span class="tn">12.4</span> <a href="#ftlab-seam">The seam: KCOV into <code>__centipede_extra_features</code></a></li>
+  <li><span class="tn">12.5</span> <a href="#ftlab-oracle">The oracle: from a panic to a failing property</a></li>
+  <li><span class="tn">12.6</span> <a href="#ftlab-remote">Remote coverage, unchanged</a></li>
+  <li><span class="tn">12.7</span> <a href="#ftlab-raw"><code>RawPage</code>: the libFuzzer harness, translated</a></li>
+  <li><span class="tn">12.8</span> <a href="#ftlab-ledger">A FuzzTest-native target: <code>harden_ledger</code> and a model-based property</a></li>
+  <li><span class="tn">12.9</span> <a href="#ftlab-measure">What the measurements say, and an ablation</a></li>
+  <li><span class="tn">12.10</span> <a href="#ftlab-engines">Engines meet the kernel: minimisation, corruption and replay</a></li>
+</ol>
+<p class="subtitle" style="margin:.75rem 0 .25rem;font-weight:600;"><a href="#chapter-13">Chapter 13 — Where to contribute next &mdash; the FuzzTest edition</a></p>
+<ol start="88">
+  <li><span class="tn">13.1</span> <a href="#ftcontrib-fuzztest">FuzzTest and Centipede</a></li>
+  <li><span class="tn">13.2</span> <a href="#ftcontrib-kernel">The kernel, and the tools around it</a></li>
+  <li><span class="tn">13.3</span> <a href="#ftcontrib-joint">The joint frontier: typed inputs for the kernel</a></li>
+</ol>
 <p class="toc-part toc-single"><a href="#epilogue">Epilogue</a></p>
 </nav>
 
@@ -172,6 +213,17 @@ Chapter&nbsp;7 installs the oracles that turn a silent corruption into an observ
 Chapter&nbsp;8 is the list of gaps you could close upstream. Chapter&nbsp;9 folds the hand-rolled
 harness into a small reusable layer, which is as close as this book comes to a victory lap.</p>
 
+<p><b>Part&nbsp;3</b> follows the engine's authors to where they went. Chapter&nbsp;10 explains
+FuzzTest's core idea: a fuzz test is a property over typed inputs, the type is the grammar, and one
+macro runs on three engines. Chapter&nbsp;11 reads FuzzTest's history in five acts, from an
+in-process engine inside GoogleTest, through the squashed import of Centipede in 2023, to the single
+binary that is both controller and runner. It then opens Centipede's feature domains and its
+counterpart to the extra-counters seam. <b>Part&nbsp;4</b> puts that engine against Part&nbsp;2's
+drivers. Chapter&nbsp;12 is the FuzzTest kernel lab, including a new driver with a bug that no
+sanitizer can see and a model-based property that finds it. Chapter&nbsp;13 lists what the lab
+found worth fixing upstream. Read Part&nbsp;3 after Part&nbsp;1; Part&nbsp;4 assumes Chapter&nbsp;6's
+lab already works on your machine.</p>
+
 <p>If you came only for the kernel, the short path is Chapter&nbsp;1, then &sect;2.2 for the seam,
 then Chapter&nbsp;6 for the lab &mdash; and then back to Chapters&nbsp;3 and&nbsp;4 the first time
 your harness does something you cannot explain. That moment arrives on schedule.</p>
@@ -193,7 +245,10 @@ moved on to <a href="https://github.com/google/centipede">Centipede</a>, and sin
 official documentation has said the engine is supported for important bug fixes but should not be
 expected to grow major features
 (<a href="https://github.com/llvm/llvm-project/commit/ec96aea846ce"><code>ec96aea846ce</code></a>).
-&sect;1.10 lays out the full twelve-year arc, including that.</p>
+&sect;1.10 lays out the full twelve-year arc, including that. Centipede did not stay on its own
+either: in April 2023 it was squashed into <a href="https://github.com/google/fuzztest">FuzzTest</a>,
+which now calls itself libFuzzer's successor. Part&nbsp;3 explains why from the commits, and
+Part&nbsp;4 runs it against the same kernel.</p>
 
 <p>Three reasons this is not the problem it looks like. First, maintenance is not abandonment: the
 log shows behaviour-changing commits through 2026, including an entirely new flag. Second, a system
@@ -209,8 +264,11 @@ on is one of the things this book is for.</p>
 
 <p>Each file-and-line reference here was re-verified against <code>llvm/llvm-project</code> at
 <a href="https://github.com/llvm/llvm-project/commit/df2b8087adbc"><code>df2b8087adbc</code></a> and
-the Linux lab tree at <code>419142eb2182</code>, and every historical claim cites the commit that
-made it true. Counts are counts I ran rather than numbers I remembered, which is why the book keeps
+the Linux lab tree at <code>419142eb2182</code>; Parts&nbsp;3 and&nbsp;4 against
+<code>google/fuzztest</code> at
+<a href="https://github.com/google/fuzztest/commit/ed1ae14a62f9"><code>ed1ae14a62f9</code></a> and
+the lab tree at <code>249a1b3322ca</code> plus the files listed in &sect;12.1. Every historical claim
+cites the commit that made it true. Counts are counts I ran rather than numbers I remembered, which is why the book keeps
 telling you to run them yourself &mdash; <code>git grep -n 'int LLVMFuzzer'</code> returned 254 hits
 across 226 files on the day of writing, and it grows every release. Where the text asserts that
 something is <em>absent</em> &mdash; that there is no <code>KCOV_INIT_TRACE64</code>, that
@@ -230,7 +288,7 @@ twice. Remaining errors are mine, and corrections are welcome at the address bel
 
 <p class="signoff"><b>Yunseong Kim</b>
 <a href="mailto:ysk@kzalloc.com">ysk@kzalloc.com</a>
-<span class="where">verified against llvm-project df2b8087adbc &middot; linux 419142eb2182</span></p>
+<span class="where">verified against llvm-project df2b8087adbc &middot; linux 419142eb2182 &middot; fuzztest ed1ae14a62f9</span></p>
 
 <div class="bookpart" id="part-1">
   <span class="plabel">Part 1</span>
@@ -5609,7 +5667,7 @@ frontier of §3.8, and a fair next project. Everything short of that, you can no
 <div class="recap"><span class="glabel">Chapter 9 &middot; recap</span><h4>Keywords to remember</h4><div class="kw"><span class="tag">thin layer</span><span class="tag">policy vs power</span><span class="tag">libbyoc</span><span class="tag">__libfuzzer_extra_counters</span><span class="tag">LLVMFuzzerRunDriver</span><span class="tag">--wrap=main</span><span class="tag">-fork=1</span><span class="tag">cmplog / trace-cmp replay</span><span class="tag">reproducer-before-run</span></div><h4>Did you get it? Self-check</h4><ul class="check"><li><label><input type="checkbox"><span>I can name each of AFL's five conveniences and the libFuzzer primitive that reproduces it.</span></label></li><li><label><input type="checkbox"><span>I can reduce a new kernel-driver harness to <code>byoc_init</code>/<code>byoc_begin</code>/<code>byoc_end</code> plus one <code>ioctl</code>.</span></label></li><li><label><input type="checkbox"><span>I can fuzz a program that already has a <code>main(argc,argv)</code> using <code>--wrap=main</code> without rewriting it.</span></label></li><li><label><input type="checkbox"><span>I can explain why <code>-fork=1</code> saves a userspace campaign but not a panicking guest, and what replaces it (§6.14).</span></label></li><li><label><input type="checkbox"><span>I can state the one thing a thin layer does <em>not</em> give you &mdash; AFL's mutation schedule &mdash; and where that work lives (§3.8).</span></label></li></ul></div>
 
 <div class="partclose">
-  <span class="plabel">Part 2 &middot; wrap-up &mdash; end of the book</span>
+  <span class="plabel">Part 2 &middot; wrap-up</span>
   <h3>From a byte array to a kernel crash, and out to the frontier</h3>
   <p>You took the loop from Part&nbsp;1 and made it drive real kernel code: KCOV donates coverage,
   KASAN supplies the oracle, virtme-ng gives a disposable target, and KASLR arithmetic turns a raw
@@ -5656,6 +5714,1817 @@ frontier of §3.8, and a fair next project. Everything short of that, you can no
 </div>
 
 
+<div class="bookpart" id="part-3">
+  <span class="plabel">Part 3</span>
+  <div class="ptitle">Theory &mdash; FuzzTest: from a fuzz target to a fuzz test</div>
+  <p>Parts&nbsp;1 and&nbsp;2 studied an engine whose input is a byte array. Part&nbsp;3 studies the
+  project its authors' organisation moved to. The preface said that libFuzzer's original authors
+  moved on to Centipede. The rest of that story is that Centipede did not stay a project of its own:
+  in April 2023 it was squashed into <a href="https://github.com/google/fuzztest">google/fuzztest</a>,
+  and FuzzTest now describes itself as &ldquo;the successor of previously used fuzzing tools, such as
+  libFuzzer&rdquo;. <b>Chapter&nbsp;10</b> explains what FuzzTest is: a fuzz test is a
+  <em>property</em> over <em>typed</em> inputs, written as an ordinary GoogleTest, and the type is
+  the grammar. The same macro runs on three engines, chosen at build time. <b>Chapter&nbsp;11</b>
+  explains why the design looks the way it does by reading its history in five acts, each pinned to the
+  commits that made it happen, and then opens Centipede, the out-of-process engine underneath.</p>
+  <div class="know">
+    <span class="glabel">What you will know after Part&nbsp;3</span>
+    <ul>
+      <li>The two axes on which FuzzTest differs from libFuzzer: <em>what</em> the unit of fuzzing is
+          (a typed value, not bytes) and <em>where</em> it executes (out of process, not in the
+          engine's address space).</li>
+      <li>How <code>FUZZ_TEST</code> turns into a registered GoogleTest, how domains (<code>Init</code>,
+          <code>Mutate</code>, <code>GetValue</code>) replace the hand-written decoder, and how a typed
+          value is stored on disk.</li>
+      <li>Which of the three engines a build gets (legacy in-process, Centipede, or libFuzzer), the flag
+          that selects it, and the honest status at the pinned commit: Centipede is
+          <em>not</em> the default.</li>
+      <li>The history: an in-process engine in 2022, the squashed Centipede import in 2023, the
+          unification in which domains became Centipede's mutator, and the single binary that is both
+          controller and runner.</li>
+      <li>How Centipede's feature domains, rarity weighting and the <code>__centipede_extra_features</code>
+          section compare with libFuzzer's feature numbers and <code>__libfuzzer_extra_counters</code>.
+          The extra-features section is the seam the kernel lab in Part&nbsp;4 uses.</li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="parthead" id="chapter-10">
+  <div class="eyebrow">Chapter 10</div>
+  <h2 class="chtitle">The core idea: a fuzz test is a property over typed inputs</h2>
+  <p style="margin:0;color:var(--muted);">libFuzzer asks you for one function,
+  <code>LLVMFuzzerTestOneInput(const uint8_t*, size_t)</code>, and leaves everything between the bytes
+  and the API to you. FuzzTest asks for any function whose parameters are ordinary C++ types, plus a
+  description of which values those parameters may take. That one change moves the decoder out of
+  the harness and into the engine. It is why a FuzzTest is also a unit test, and it is the thread
+  that runs through the rest of the design. Every claim in this chapter was checked against
+  <code>google/fuzztest</code> at
+  <a href="https://github.com/google/fuzztest/commit/ed1ae14a62f9"><code>ed1ae14a62f9</code></a>
+  (2026-10-14, 1700 commits).</p>
+</div>
+
+<div class="goals">
+  <span class="glabel">Before you start · Chapter 10</span>
+  <p class="lead">After this chapter you will be able to:</p>
+  <ul>
+    <li>Rewrite a libFuzzer target as a <code>FUZZ_TEST</code>, and say what the engine now does that
+        your harness used to do.</li>
+    <li>Read a domain expression such as <code>VectorOf(VariantOf(StructOf&lt;A&gt;(...), ...))</code>
+        and predict which values it can and cannot produce.</li>
+    <li>Explain the difference between unit-test mode and fuzzing mode, and why the same binary does
+        both.</li>
+    <li>Name the three engines behind the macro, the build switch for each, and the one that
+        <code>--config=fuzztest</code> actually gives you.</li>
+    <li>Fill in the comparison table between libFuzzer and FuzzTest from memory: input, oracle,
+        engine, coverage, corpus and reproducer.</li>
+  </ul>
+</div>
+
+<h2 id="ft-core">10.1 From fuzz target to fuzz test</h2>
+
+<p>Start with the warm-up target from &sect;6.7: a header with a four-byte magic, a version, a kind
+and a length, followed by an unchecked <code>memcpy</code>. The libFuzzer harness and the code under
+test are the same function: the harness <em>is</em> a parser of bytes. Here is the same code as a
+FuzzTest property, taken from <code>tools/harden/fuzztest/userspace_fuzztest.cc</code> in the lab
+tree:</p>
+
+<span class="src"><b class="cnum">List 10.1</b> tools/harden/fuzztest/userspace_fuzztest.cc &mdash; the same parser, fuzzed as bytes and as typed fields</span>
+<pre><code>// 1. Bytes: the libFuzzer contract, spelled as a FuzzTest property.
+void Bytes(const std::string&amp; input) {
+  ParseHard(reinterpret_cast&lt;const uint8_t*&gt;(input.data()), input.size());
+}
+FUZZ_TEST(Userspace, Bytes);  // Arbitrary&lt;std::string&gt;() is the default domain
+
+// 2. Typed: the harness owns the encoding; the engine mutates fields.
+void Typed(uint8_t version, uint8_t kind, uint16_t len,
+           const std::string&amp; payload) {
+  std::string wire = Encode(version, kind, len, payload);
+  ParseHard(reinterpret_cast&lt;const uint8_t*&gt;(wire.data()), wire.size());
+}
+FUZZ_TEST(Userspace, Typed)
+    .WithDomains(<mark>fuzztest::Arbitrary&lt;uint8_t&gt;(), fuzztest::Arbitrary&lt;uint8_t&gt;(),
+                 fuzztest::Arbitrary&lt;uint16_t&gt;(),
+                 fuzztest::Arbitrary&lt;std::string&gt;().WithMaxSize(64)</mark>);</code></pre>
+
+<p>Three things changed, and they are the whole of FuzzTest's core idea.</p>
+
+<ol>
+  <li><b>The input is a typed value.</b> <code>Typed</code> takes four parameters. The engine never
+      sees a byte array; it keeps a <code>uint8_t</code>, a <code>uint8_t</code>, a
+      <code>uint16_t</code> and a <code>std::string</code>, and mutates each one as what it is. The
+      endianness of <code>len</code> and the fixed magic now live in <code>Encode</code>, which is
+      ordinary code, not a decoder the mutator has to reverse-engineer.</li>
+  <li><b>The function is a property.</b> A fuzz test is a statement, &ldquo;for every
+      <code>version</code>, <code>kind</code>, <code>len</code> and <code>payload</code> this code is
+      safe&rdquo;. A crash falsifies it, and so does any GoogleTest assertion. The <code>RoundTrip</code>
+      property in the same file has no memory bug at all; its oracle is
+      <code>EXPECT_EQ(m-&gt;len, len)</code>.</li>
+  <li><b>It is a test.</b> <code>FUZZ_TEST</code> registers a GoogleTest. Run the binary with no
+      flags and every property runs briefly as a unit test; run it with <code>--fuzz=Userspace.Typed</code>
+      and one property runs under a coverage-guided engine until it fails or time runs out.</li>
+</ol>
+
+<figure class="diagram-fig" id="fig-unit-of-fuzzing">
+<img class="fig-light" src="img/23-unit-of-fuzzing.svg" alt="Two pipelines side by side. libFuzzer: a raw-bytes corpus file goes to the MutationDispatcher, then to LLVMFuzzerTestOneInput, where the harness decodes bytes into the API. FuzzTest: a FUZZTESTv1 IRObject corpus file goes to domain.Mutate on the corpus type, then domain.GetValue converts it to the value type, then the property is called as plain C++ with EXPECT assertions."
+     decoding="async">
+<img class="fig-dark" src="img/23-unit-of-fuzzing.dark.svg" alt="" aria-hidden="true"
+     decoding="async">
+<figcaption><b class="cnum">Figure 10.1</b> The unit of fuzzing. In libFuzzer the decoder is the last
+step and it is yours; in FuzzTest the domain owns both mutation and conversion, so the property
+receives values that are already well formed.</figcaption>
+</figure>
+
+<p>The README states the ambition directly: FuzzTest is &ldquo;the successor of previously used
+fuzzing tools, such as libFuzzer&rdquo; and &ldquo;bridges the gap between fuzzing and property-based
+testing&rdquo;. The second phrase matters more. Property-based testing (QuickCheck, Hypothesis) has
+always had typed generators and shrinking but no coverage feedback. Coverage-guided fuzzing has always
+had feedback but only bytes. A FuzzTest is both at once.</p>
+
+<div class="card"><b>Unit-test mode is not a toy.</b> Without <code>--fuzz</code>, each property
+runs for up to one second or 10&nbsp;000 iterations (<code>runtime.cc</code>, the
+<code>RunMode::kUnitTest</code> branch near line 1079; <code>FUZZTEST_FUZZ_FOR</code> overrides the
+duration). It first replays any inputs already stored in the corpus database, then walks: 99 random
+mutations of one value, a fresh <code>Init</code>, and again. Nothing is kept for coverage, so
+this is property-based testing with no feedback at all, and that is often enough. In the lab, <code>Userspace.RoundTrip</code> fails in a plain run of the binary with no flags, because almost every random <code>uint16_t</code> is a counterexample (all but the 256 whose two
+bytes are equal). The
+<code>TEST(Userspace, RoundTripUnitTestMissesTheBug)</code> beside it, which calls the property once
+with <code>len = 0</code>, passes. That gap is what a hand-written unit test misses and a domain
+does not.</div>
+
+<h2 id="ft-contract">10.2 The contract: <code>FUZZ_TEST</code> and registration</h2>
+
+<p>The macro is thin. It expands to a static <code>RegistrationToken</code> initialised from a
+<code>Registration</code> object that records the function, the suite and test names, and the source
+location:</p>
+
+<span class="src"><b class="cnum">List 10.2</b> fuzztest/internal/registry.h:104 &mdash; INTERNAL_FUZZ_TEST: a fuzz test is a static registration</span>
+<pre><code>#define INTERNAL_FUZZ_TEST(suite_name, func)                      \
+  [[maybe_unused]] static ::fuzztest::internal::RegistrationToken \
+      fuzztest_reg___##suite_name##___##func =                    \
+          ::fuzztest::internal::RegistrationToken{} =             \
+              ::fuzztest::GetRegistration&lt;decltype(+func)&gt;(       \
+                  #suite_name, #func, __FILE__, __LINE__, +func)</code></pre>
+
+<p>Note what the token pastes together: the test name <em>is</em> the function name. That is why the
+lab's harness has <code>LocalCommands</code> and <code>RemoteCommands</code> as two functions rather
+than two tests called <code>Commands</code>; the first build attempt with
+<code>FUZZ_TEST(HardenLocal, Commands)</code> failed with &ldquo;use of undeclared identifier
+'Commands'&rdquo;. Everything after the macro is a builder on the registration:</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 10.1</b> The registration builder: what each call on a FUZZ_TEST adds, and its libFuzzer analogue.</caption>
+<tr><th>Call</th><th>What it records</th><th>Closest libFuzzer equivalent</th></tr>
+<tr><td><code>FUZZ_TEST(S, F)</code></td><td>the property <code>F</code>, registered as GoogleTest <code>S.F</code>; every parameter defaults to <code>Arbitrary&lt;T&gt;()</code></td><td><code>LLVMFuzzerTestOneInput</code></td></tr>
+<tr><td><code>.WithDomains(d1, d2, ...)</code></td><td>one domain per parameter, replacing the default</td><td>the decoder you wrote inside the target, or a custom mutator (&sect;3.8)</td></tr>
+<tr><td><code>.WithSeeds({...})</code></td><td>initial values, as typed tuples (<a href="https://github.com/google/fuzztest/commit/0130e1e775b9"><code>0130e1e775b9</code></a>)</td><td>a seed corpus directory of byte files</td></tr>
+<tr><td><code>FUZZ_TEST_F(Fixture, F)</code></td><td>a fixture, instantiated once per fuzz test (<code>PerFuzzTestFixtureAdapter</code>) or once per iteration (<code>PerIterationFixtureAdapter</code>); see <code>doc/fixtures.md</code></td><td><code>LLVMFuzzerInitialize</code>, without a teardown hook</td></tr>
+<tr><td><code>InitFuzzTest(&amp;argc, &amp;argv)</code></td><td>flag parsing for a custom <code>main()</code> (<a href="https://github.com/google/fuzztest/commit/fda73b5b0f6a"><code>fda73b5b0f6a</code></a>)</td><td><code>LLVMFuzzerRunDriver</code> (&sect;9.4)</td></tr>
+</table>
+</div>
+
+<h2 id="ft-domains">10.3 Domains: the type is the grammar</h2>
+
+<p>A domain is an object that knows how to produce, mutate and convert values of one type. The
+interface is documented at the top of <code>fuzztest/internal/domains/domain_base.h</code>:</p>
+
+<span class="src"><b class="cnum">List 10.3</b> fuzztest/internal/domains/domain_base.h:69 &mdash; the domain contract every combinator implements</span>
+<pre><code>// - corpus_type Init(absl::BitGenRef prng)
+// - void Mutate(corpus_type&amp; val, absl::BitGenRef prng,
+//               const domain_implementor::MutationMetadata&amp; metadata,
+//               bool only_shrink)
+// - absl::Status ValidateCorpusValue(const corpus_type&amp; val) const
+// ...  value_type GetValue(const corpus_type&amp;)  /  FromValue(const value_type&amp;)
+//      SerializeCorpus / ParseCorpus  &lt;-&gt;  IRObject</code></pre>
+
+<p>Two types appear, and the distinction is the key to the design. <code>value_type</code> is what your
+function receives (a <code>std::vector&lt;Cmd&gt;</code>, say). <code>corpus_type</code> is what the
+engine stores and mutates, and it may carry more information than the value. A regular-expression
+domain, for example, keeps the path through the automaton rather than the string. The engine keeps
+<code>corpus_type</code> in its corpus and converts at the last moment with <code>GetValue</code>.
+On disk the corpus type is serialised as an <code>IRObject</code> tree behind a
+<code>FUZZTESTv1</code> header (<code>serialization.cc:74</code>; the binary form is
+<code>FUZZTESTv1b</code>). That is why a FuzzTest crash file starts with those bytes and is not the
+input itself: it is the structured value from which the input is rebuilt.</p>
+
+<p>Domains compose. These are the ones the lab uses, and what each one guarantees:</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 10.2</b> Domain combinators used in Part 4, and the guarantee each one gives the property.</caption>
+<tr><th>Domain</th><th>Produces</th><th>What the property no longer has to check</th></tr>
+<tr><td><code>Arbitrary&lt;T&gt;()</code></td><td>any value of <code>T</code>; for integers, mutation biased by values seen in comparisons</td><td>nothing; it is the byte array's typed cousin</td></tr>
+<tr><td><code>InRange(lo, hi)</code></td><td>integers in <code>[lo, hi]</code></td><td>out-of-range sizes and handles</td></tr>
+<tr><td><code>ElementOf({...})</code></td><td>one of a fixed set</td><td>unknown opcodes</td></tr>
+<tr><td><code>StructOf&lt;S&gt;(d...)</code></td><td>an aggregate <code>S</code>, one domain per field</td><td>field layout, padding, endianness</td></tr>
+<tr><td><code>VectorOf(d).WithMaxSize(n)</code></td><td>sequences of up to <code>n</code> elements</td><td>a count field that disagrees with the payload</td></tr>
+<tr><td><code>VariantOf(d1, d2, ...)</code></td><td><code>std::variant</code> of alternatives</td><td>a tag that selects nothing</td></tr>
+<tr><td><code>FlatMap(f, d)</code></td><td>a domain chosen from a value (<a href="https://github.com/google/fuzztest/commit/46911f51088e"><code>46911f51088e</code></a>)</td><td>dependent constraints, such as &ldquo;a length, then exactly that many bytes&rdquo;</td></tr>
+<tr><td><code>InGrammar</code>, protobuf</td><td>strings in an ANTLR grammar (<a href="https://github.com/google/fuzztest/commit/5c14a8d78386"><code>5c14a8d78386</code></a>), messages of a proto type</td><td>syntax</td></tr>
+</table>
+</div>
+
+<p>The lab's ledger property shows composition at full strength. One expression describes &ldquo;a
+sequence of at most twelve calls, each of which is an allocation of 1&ndash;4096 bytes, a resize of
+handle 0&ndash;7, or a free of handle 0&ndash;7&rdquo;:</p>
+
+<span class="src"><b class="cnum">List 10.4</b> tools/harden/fuzztest/ledger_fuzztest.cc &mdash; a stateful API sequence as one domain expression</span>
+<pre><code>struct Alloc  { uint16_t size; };
+struct Resize { uint8_t handle; uint16_t size; };
+struct Free   { uint8_t handle; };
+using Call = std::variant&lt;Alloc, Resize, Free&gt;;
+
+FUZZ_TEST(HardenLedger, KernelMatchesModel)
+    .WithDomains(<mark>VectorOf(VariantOf(
+                              StructOf&lt;Alloc&gt;(InRange&lt;uint16_t&gt;(1, kQuota)),
+                              StructOf&lt;Resize&gt;(InRange&lt;uint8_t&gt;(0, kSlots - 1),
+                                               InRange&lt;uint16_t&gt;(1, kQuota)),
+                              StructOf&lt;Free&gt;(InRange&lt;uint8_t&gt;(0, kSlots - 1))))
+                     .WithMaxSize(12)</mark>);</code></pre>
+
+<p>A libFuzzer harness for the same driver would have to choose a byte encoding for this sequence,
+write the decoder, decide what to do with the bytes that decode to nothing, and then hope the mutator's
+bit flips land on meaningful fields. With domains, every value the engine produces is a well-formed
+call sequence, and a mutation is a typed edit: insert a call, change one field, swap two elements.
+The counterexample comes back typed as well, as
+<code>{Alloc{462}, Resize{0, 4096}, Free{0}}</code> rather than a hex dump (&sect;12.8).</p>
+
+<div class="aside"><b>Where compare feedback goes.</b> libFuzzer's TORC (&sect;3.4) feeds a
+byte-level dictionary. FuzzTest's comparison hooks in <code>coverage.cc</code> fill the same kind of
+table of recent compares, but the consumer is the <em>domain</em>: an integer domain's
+<code>Mutate</code> can pull a value that a comparison was just seen against, and a string domain can
+splice a <code>memcmp</code> operand. So the guidance is typed too: a comparison against
+<code>0xA5</code> becomes a candidate value for a <code>uint8_t</code> field, not for an arbitrary
+byte offset.</div>
+
+<h2 id="ft-engines">10.4 Three engines behind one macro</h2>
+
+<p>A registered property still has to be executed by something. FuzzTest decides what at
+<em>build</em> time, in one function template whose body is a three-way <code>#if</code>:</p>
+
+<span class="src"><b class="cnum">List 10.5</b> fuzztest/internal/registry.h:71 &mdash; GetFuzzTestFuzzerFactory: the engine is a preprocessor decision</span>
+<pre><code>  static FuzzTestFuzzerFactory GetFuzzTestFuzzerFactory(
+      Registration&lt;Fixture, TargetFunction, RegBase, SeedProvider&gt;&amp;&amp; reg) {
+#if defined(FUZZTEST_COMPATIBILITY_MODE) &amp;&amp; defined(FUZZTEST_USE_CENTIPEDE)
+#error FuzzTest compatibility mode cannot work together with Centipede.
+#endif
+#if defined(FUZZTEST_COMPATIBILITY_MODE)
+    using FuzzerImpl = <mark>FuzzTestExternalEngineAdaptor</mark>;
+#elif defined(FUZZTEST_USE_CENTIPEDE)
+    using FuzzerImpl = <mark>CentipedeFuzzerAdaptor</mark>;
+#else
+    using FuzzerImpl = <mark>FuzzTestFuzzerImpl</mark>;
+#endif</code></pre>
+
+<figure class="diagram-fig" id="fig-fuzztest-architecture">
+<img class="fig-light" src="img/22-fuzztest-architecture.svg" alt="FUZZ_TEST with WithDomains and WithSeeds, plus the domain library, feed a RegistrationToken, which becomes one GoogleTest per property. A build-time choice in GetFuzzTestFuzzerFactory then selects one of three engines: the default legacy in-process FuzzTestFuzzerImpl, the out-of-process CentipedeFuzzerAdaptor when FUZZTEST_USE_CENTIPEDE is defined by --config=fuzztest-experimental, or FuzzTestExternalEngineAdaptor driven by libFuzzer when FUZZTEST_COMPATIBILITY_MODE is defined by --config=libfuzzer. In all three, the same domains do the mutation."
+     decoding="async">
+<img class="fig-dark" src="img/22-fuzztest-architecture.dark.svg" alt="" aria-hidden="true"
+     decoding="async">
+<figcaption><b class="cnum">Figure 10.2</b> One front-end, three back-ends. The macro and the domains
+are FuzzTest's stable surface; which engine runs underneath is decided by a preprocessor define that
+a Bazel config sets.</figcaption>
+</figure>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 10.3</b> The three engines at ed1ae14a62f9: how to select each, how it runs, and how it sees coverage.</caption>
+<tr><th>Engine</th><th>Selected by</th><th>Execution</th><th>Coverage it reads</th></tr>
+<tr><td><b>legacy</b> <code>FuzzTestFuzzerImpl</code> (<code>runtime.cc</code>)</td>
+    <td><code>--config=fuzztest</code>; the default</td>
+    <td>in process, on the test's own thread</td>
+    <td>inline 8-bit counters of <em>one</em> DSO, plus a comparison map; nothing else</td></tr>
+<tr><td><b>Centipede</b> <code>CentipedeFuzzerAdaptor</code></td>
+    <td><code>--config=fuzztest-experimental</code>, which sets the
+        <code>centipede_integration</code> flag (default <code>False</code>)</td>
+    <td>out of process: the binary is the controller, and re-executes itself as runners</td>
+    <td>Centipede feature domains: PCs, counters, data flow, CMP, call stack, PC pairs, and
+        16 user domains from <code>__centipede_extra_features</code></td></tr>
+<tr><td><b>libFuzzer</b> <code>FuzzTestExternalEngineAdaptor</code></td>
+    <td><code>--config=libfuzzer</code> (generated only with <code>EXTRA_CONFIGS=libfuzzer</code>)</td>
+    <td>in process, libFuzzer's loop; FuzzTest supplies a custom mutator over the serialised value</td>
+    <td>whatever libFuzzer reads, including <code>__libfuzzer_extra_counters</code> (&sect;2.2)</td></tr>
+</table>
+</div>
+
+<div class="card"><b>The honest status.</b> It is tempting to summarise the merge as &ldquo;FuzzTest
+now runs on Centipede&rdquo;. At the pinned commit that is true only if you ask for it. In
+<code>fuzztest/BUILD</code>, <code>bool_flag(name = "centipede_integration", build_setting_default =
+False)</code>; <code>bazel/setup_configs.sh</code> still gives <code>--config=fuzztest</code> the
+in-process engine with <code>-fsanitize-coverage=inline-8bit-counters,trace-cmp,pc-table</code>, and
+calls the Centipede config <em>experimental</em>. The CMake build (added in
+<a href="https://github.com/google/fuzztest/commit/1a254dcfa76f"><code>1a254dcfa76f</code></a>) has no
+Centipede wiring at all. And no commit in the 1700 removes the legacy engine or the libFuzzer mode;
+<a href="https://github.com/google/fuzztest/commit/f1e26613f669"><code>f1e26613f669</code></a> (2025-06)
+added end-to-end tests for the libFuzzer mode. So &ldquo;which engine am I on?&rdquo; is the first
+question to ask about any FuzzTest result, and Part&nbsp;4 shows that the answer changes what the
+kernel lab can see.</div>
+
+<h2 id="ft-legacy">10.5 The legacy engine: libFuzzer's loop, typed</h2>
+
+<p>The in-process engine is the one FuzzTest was born with, and if you have read Chapter&nbsp;1 you
+already know its shape. <code>FuzzTestFuzzerImpl::RunInFuzzingMode</code> (<code>runtime.cc:1208</code>)
+seeds a corpus, tries 32 fresh <code>Init</code> values, and then loops:</p>
+
+<span class="src"><b class="cnum">List 10.6</b> fuzztest/internal/runtime.cc:1317 &mdash; the legacy loop: pick by weight, mutate 32 times, re-Init every 32000 runs</span>
+<pre><code>    while (!ShouldStop()) {
+      Input input_to_mutate = [&amp;]() -&gt; Input {
+        // Try a brand new random element every now and then.
+        if (stats_.runs &gt; next_init) {
+          next_init = stats_.runs + <mark>kRunsPerInit</mark>;          // 32000
+          return {params_domain_.Init(prng)};
+        } else {
+          size_t idx = static_cast&lt;size_t&gt;(<mark>corpus_distribution_(prng)</mark>);
+          return corpus_[idx];
+        }
+      }();
+      constexpr int <mark>kMutationsPerInput = 32</mark>;
+      for (int i = 0; i &lt; kMutationsPerInput; ++i) {
+        Input mutation = input_to_mutate;
+        MutateValue(mutation, prng, mutation_metadata);   // the domain mutates
+        try_input_and_process_counterexample(std::move(mutation));
+      }
+    }</code></pre>
+
+<p>Set it beside libFuzzer's <code>MutateAndTestOne</code> (&sect;1.7) and three differences stand
+out.</p>
+
+<ul>
+  <li><b>Mutation is the domain's.</b> <code>MutateValue</code> calls
+      <code>params_domain_.Mutate</code>; there is no byte-level dispatcher. The comparison tables
+      reach the domains through <code>mutation_metadata.cmp_tables</code>.</li>
+  <li><b>Scheduling is simple.</b> <code>UpdateCorpusDistribution</code>
+      (<code>runtime.cc:861</code>) weights each corpus input only by its run time relative to the
+      average, from 10 for the slowest to 300 for the fastest. Nothing like Entropic's per-feature
+      energy (&sect;4.3) is involved.</li>
+  <li><b>Coverage has one source.</b> The <code>__sanitizer_cov_8bit_counters_init</code> callback in
+      <code>coverage.cc</code> keeps the <em>first</em> counter region it is given and warns on any
+      other: &ldquo;Currently, we only support recording coverage metrics for the first DSO
+      encountered.&rdquo; There is no extra-counters section. Nothing outside the binary's own
+      instrumentation can reach the engine, which is exactly the property a kernel harness needs and
+      this engine lacks (&sect;12.4).</li>
+</ul>
+
+<p>One behaviour has no libFuzzer counterpart, and it matters in a kernel. A GoogleTest assertion
+failure is a <em>non-fatal</em> failure: the property returns normally. The legacy engine records the
+input and then, before reporting, calls <code>MinimizeNonFatalFailureLocally</code>
+(<code>runtime.cc:1168</code>). For up to one minute, or until 10&nbsp;000 mutations in a row fail to
+find a smaller failing value, it keeps mutating the counterexample and <em>re-running the
+property</em>. Then it runs the best one once more, now with termination on failure. For a pure
+function this produces beautifully small counterexamples. For a property that writes out of bounds
+inside a shared kernel, it means the bug is triggered dozens of times in a row. &sect;12.10 shows what
+that did to the lab guest.</p>
+
+<h2 id="ft-vs-libfuzzer">10.6 libFuzzer and FuzzTest, side by side</h2>
+
+<p>The differences can now be put in one table. Read it as two axes rather than eleven rows.
+<em>What</em> is fuzzed changed from bytes to typed values, which moves the decoder, the oracle and
+the reproducer into the framework. <em>Where</em> it runs changed from the engine's own process to
+a separate runner, which changes crash survival, parallelism and the coverage seam. Chapter&nbsp;11
+shows that these two changes came from two different projects that were merged.</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 10.4</b> libFuzzer versus FuzzTest, row by row, with the section of this book that explains each side.</caption>
+<tr><th></th><th>libFuzzer</th><th>FuzzTest</th></tr>
+<tr><td>Entry point</td><td><code>LLVMFuzzerTestOneInput(data, size)</code> (&sect;1.3)</td><td><code>FUZZ_TEST(Suite, F)</code>: any function, any parameter types (&sect;10.2)</td></tr>
+<tr><td>Unit of fuzzing</td><td>byte array</td><td>typed value; <code>corpus_type</code> in the engine, <code>value_type</code> in the property (&sect;10.3)</td></tr>
+<tr><td>Input structure</td><td>decoded by the harness; custom mutator if you want structure (&sect;3.8)</td><td>declared with domains; every input is well formed by construction</td></tr>
+<tr><td>Oracle</td><td>crash, sanitizer report, <code>abort()</code>; a property needs a manual <code>abort</code></td><td>the same, plus every <code>EXPECT_*</code>/<code>ASSERT_*</code></td></tr>
+<tr><td>Test integration</td><td>separate binary</td><td>one GoogleTest; unit-test mode without <code>--fuzz</code></td></tr>
+<tr><td>Engine</td><td>one, in process</td><td>three: legacy in process (default), Centipede out of process, libFuzzer (&sect;10.4)</td></tr>
+<tr><td>Coverage</td><td>8-bit counters, value profile, stack depth, extra counters (&sect;4.2)</td><td>legacy: counters of one DSO and a CMP map. Centipede: feature domains and user domains (&sect;11.7)</td></tr>
+<tr><td>External coverage seam</td><td><code>__libfuzzer_extra_counters</code>, 8-bit counters</td><td>Centipede only: <code>__centipede_extra_features</code>, 64-bit features</td></tr>
+<tr><td>Corpus schedule</td><td>Entropic energy per feature (&sect;4.3)</td><td>legacy: run-time weights. Centipede: feature rarity &times; domain weight (&sect;11.7)</td></tr>
+<tr><td>Crash survival</td><td><code>-fork=N</code> (&sect;4.5)</td><td>Centipede: runners die, the controller survives; <code>--jobs</code></td></tr>
+<tr><td>Reproducer</td><td><code>crash-&lt;sha1&gt;</code> raw bytes (&sect;4.4)</td><td>typed counterexample, a <em>regression test draft</em>, and a serialised file in the corpus database</td></tr>
+</table>
+</div>
+
+<div class="ex">
+  <h4>Exercises</h4>
+  <ol>
+    <li>Take any libFuzzer target from Chapter&nbsp;5's catalogue and write it as a
+        <code>FUZZ_TEST</code> twice: once over <code>std::string</code> and once with typed
+        parameters. Which branches of the target can the typed version no longer reach, and is that
+        a bug in your domain or a feature?</li>
+    <li>Build <code>userspace_fuzztest</code> with <code>--config=fuzztest</code> and with
+        <code>--config=fuzztest-experimental</code>, then run <code>nm</code> on both and look for
+        <code>__start___centipede_extra_features</code>. What does its presence or absence tell you
+        about which engine you built?</li>
+    <li>Write a property whose only oracle is an <code>EXPECT_EQ</code>, and fuzz it with the legacy
+        engine. Count how many times the property runs <em>after</em> the first failure. Find the
+        constant in <code>runtime.cc</code> that bounds it.</li>
+  </ol>
+</div>
+
+<div class="recap"><span class="glabel">Chapter 10 &middot; recap</span><h4>Keywords to remember</h4><div class="kw"><span class="tag">fuzz test</span><span class="tag">property</span><span class="tag">FUZZ_TEST</span><span class="tag">domain</span><span class="tag">corpus_type / value_type</span><span class="tag">IRObject</span><span class="tag">unit-test mode</span><span class="tag">--fuzz</span><span class="tag">FuzzTestFuzzerImpl</span><span class="tag">CentipedeFuzzerAdaptor</span><span class="tag">FUZZTEST_COMPATIBILITY_MODE</span><span class="tag">non-fatal failure minimisation</span></div><h4>Did you get it? Self-check</h4><ul class="check"><li><label><input type="checkbox"><span>I can explain why the decoder disappears from a FuzzTest harness, and where it went.</span></label></li><li><label><input type="checkbox"><span>I can name the three engines, the define that selects each, and the one <code>--config=fuzztest</code> gives me.</span></label></li><li><label><input type="checkbox"><span>I can state why the legacy engine cannot see kernel coverage.</span></label></li><li><label><input type="checkbox"><span>I can describe what happens between the first <code>EXPECT</code> failure and the report in the legacy engine.</span></label></li><li><label><input type="checkbox"><span>I can reproduce Table&nbsp;10.4's two axes, <em>what</em> and <em>where</em>, from memory.</span></label></li></ul></div>
+
+<div class="parthead" id="chapter-11">
+  <div class="eyebrow">Chapter 11</div>
+  <h2 class="chtitle">Why FuzzTest absorbed Centipede: the design history in five acts</h2>
+  <p style="margin:0;color:var(--muted);">The preface said that libFuzzer's authors moved on to
+  Centipede. Centipede then moved too: it was squashed into FuzzTest in April 2023, and its
+  <code>README</code> now opens by pointing there. This chapter explains why, from the commits rather
+  than from press releases. The short answer is that the two projects had solved different halves of
+  the same problem. FuzzTest had the front-end, typed properties that engineers actually write.
+  Centipede had the back-end, an out-of-process engine that scales to thousands of jobs. Each needed
+  what the other had. The long answer is five acts and about forty commits, and it ends with an honest
+  note: at the pinned commit the merge is still being finished.</p>
+</div>
+
+<div class="goals">
+  <span class="glabel">Before you start · Chapter 11</span>
+  <p class="lead">After this chapter you will be able to:</p>
+  <ul>
+    <li>Tell the FuzzTest story in five acts, and cite the commit that opens each one.</li>
+    <li>Explain what Centipede was built for, in its own README's words, and why that made it the
+        natural back-end for FuzzTest rather than a competitor.</li>
+    <li>Follow one input through Centipede's controller, fork server, runner and shared memory.</li>
+    <li>Place a feature on Centipede's domain number line, and compute how rarity weighting values
+        it.</li>
+    <li>Write a user feature into <code>__centipede_extra_features</code> correctly, and say how it
+        differs from writing to <code>__libfuzzer_extra_counters</code>.</li>
+  </ul>
+</div>
+
+<h2 id="ft-act1">11.1 Act I (2022): a libFuzzer-shaped engine inside GoogleTest</h2>
+
+<p>The public history starts with
+<a href="https://github.com/google/fuzztest/commit/658be28962db"><code>658be28962db</code></a>
+(2022-09-12, &ldquo;Internal change&rdquo;): 89 files and 22&nbsp;917 lines, imported whole from
+Google's internal tree. It already contains everything Chapter&nbsp;10 described.
+<code>fuzztest.h</code> has <code>FUZZ_TEST</code> and <code>FUZZ_TEST_F</code>, the domain library
+includes <code>Arbitrary&lt;Proto&gt;</code>, and <code>runtime.cc</code> defaults to unit-test mode.
+<code>coverage.cc</code> collects coverage through <code>__sanitizer_cov_8bit_counters_init</code> and
+the <code>trace_const_cmp</code> hooks. And <code>compatibility_mode.cc</code> is an adapter to run on
+libFuzzer. So from the first day FuzzTest was its own in-process, libFuzzer-like engine, with libFuzzer
+kept as an alternative back-end.</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 11.1</b> Act I commits: the in-process engine, made usable.</caption>
+<tr><th>Commit</th><th>Date</th><th>What changed, and why it matters</th></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/658be28962db"><code>658be28962db</code></a></td><td>2022-09-12</td><td>Public import: macro, domains, in-process engine, libFuzzer adapter.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/46911f51088e"><code>46911f51088e</code></a></td><td>2022-09-15</td><td>&ldquo;Add FlatMap&rdquo;: dependent domains, the monadic bind that lets one value choose the next domain.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/878a7d8c60ba"><code>878a7d8c60ba</code></a></td><td>2022-09-19</td><td>&ldquo;Add (optional) --config=libfuzzer compatibility mode&rdquo;: libFuzzer becomes a pluggable back-end, selected by a define.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/a965fe3d521a"><code>a965fe3d521a</code></a></td><td>2022-10-24</td><td>A per-test time limit, the origin of <code>--fuzz_for</code>, so one binary can fuzz many tests in turn.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/054b0edd8f87"><code>054b0edd8f87</code></a></td><td>2022-12-07</td><td>Seeds from the environment: <code>FUZZTEST_PRNG_SEED</code>, the line every run prints first.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/ab5d4c4c1680"><code>ab5d4c4c1680</code></a></td><td>2023-01-11</td><td>Type erasure for domains and fixture drivers, to cut compile time: the domain library had grown big enough to hurt.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/1a254dcfa76f"><code>1a254dcfa76f</code></a></td><td>2023-04-03</td><td>CMake integration. It wires the in-process engine only, and still does.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/0130e1e775b9"><code>0130e1e775b9</code></a></td><td>2023-04-10</td><td><code>.WithSeeds()</code>: typed seeds instead of a corpus directory.</td></tr>
+</table>
+</div>
+
+<p>Act I is a front-end story. Almost every commit is about how a test is written, seeded, timed and
+compiled; the engine underneath barely changes. That engine is the one Chapter&nbsp;10 measured: one
+process, one DSO of counters, run-time weights. It was enough for unit-test-sized properties, which is
+what FuzzTest was for.</p>
+
+<h2 id="ft-act2">11.2 Act II (April 2023): the squash</h2>
+
+<p>Meanwhile, a separate repository, <code>google/centipede</code>, was being built by a small team that
+included Kostya Serebryany, libFuzzer's original author. Its README states the motivation plainly:</p>
+
+<span class="src"><b class="cnum">List 11.1</b> centipede/README.md:2&ndash;40 &mdash; Centipede in its own words: distributed, out of process, built for scale</span>
+<pre><code># Centipede - a distributed fuzzing engine. Work-in-progress.
+...
+We are currently trying to fuzz some very large and very slow targets
+for which libFuzzer, AFL, and the like do not necessarily scale
+well. For one of our motivating examples see SiliFuzz.
+...
+* Scale. The intent is to be able to run any number of jobs concurrently, with
+  very little communication overhead. We currently test with <mark>100 local jobs and
+  with 10k jobs on a cluster</mark>.
+
+* <mark>Out of process.</mark> The target runs in a separate process. Any crashes in it will
+  not affect the fuzzer. Centipede can be used in-process as well, but this mode
+  is not the main goal. <mark>If your target is small and fast you probably still want
+  libFuzzer.</mark></code></pre>
+
+<p>Read that against Chapter&nbsp;4 and the motivation is clear. libFuzzer's design decisions are all
+in-process: a crash ends the engine, <code>-fork</code> (&sect;4.5) is a retrofit, and the corpus and
+feature set live in one address space. That is the right design for a small, fast target, and the
+README says so. For a large, slow target fuzzed by ten thousand machines it is the wrong design. You
+want the engine to survive the target, to run many runners per controller, and to keep a richer
+coverage signal, because every execution is expensive. Centipede was libFuzzer's author rebuilding
+the back-end for that case.</p>
+
+<p>The merge itself is one commit:
+<a href="https://github.com/google/fuzztest/commit/a15547ee04e3"><code>a15547ee04e3</code></a>
+(2023-04-19, Xinhao Yuan), &ldquo;Merge Centipede into FuzzTest.&rdquo; Despite the name it is not a
+git merge. It has a single parent (<code>713e34363f4d</code>) and adds 166 files and 25&nbsp;355 lines,
+163 of them under <code>centipede/</code>. Centipede's own history was not carried over. Only one
+<code>centipede/</code> commit predates it, the placeholder
+<a href="https://github.com/google/fuzztest/commit/6b2d00d9d8a2"><code>6b2d00d9d8a2</code></a>
+(2023-04-10) that created <code>USER_MIGRATION.md</code>. Kostya Serebryany's first commit in this
+repository,
+<a href="https://github.com/google/fuzztest/commit/cb427de27de4"><code>cb427de27de4</code></a>
+(&ldquo;#Centipede speed up GetOneEnv on runner_fork_server.cc&rdquo;), lands two days later. He has 85
+commits here, all of them Centipede work after the merge.</p>
+
+<p>The migration note gives the reason in one sentence: &ldquo;Centipede has been merged into FuzzTest
+to consolidate fuzzing development.&rdquo; It does not use the word <em>deprecated</em>. It tells
+Bazel users to replace <code>@centipede//</code> with <code>@com_google_fuzztest//centipede</code>.
+<em>Consolidate</em> is the precise word. The organisation that had built libFuzzer now had two
+successors, one with users and one with scale, and it chose to make them one product.</p>
+
+<h2 id="ft-act3">11.3 Act III (2023): domains become Centipede's mutator</h2>
+
+<p>A squash puts two codebases in one tree; it does not make them one engine. Act III is the work that
+did, and almost all of it is by Xinhao Yuan, who with 404 commits is the most active author in the
+repository. Read the commits in order and you watch the two halves being connected in a deliberate
+sequence: first make the domains linkable without heavy dependencies, then let Centipede feed them,
+then let them mutate, then let the runner call a FuzzTest property.</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 11.2</b> Act III commits: connecting FuzzTest's front-end to Centipede's back-end.</caption>
+<tr><th>Commit</th><th>Date</th><th>What changed, and why it matters</th></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/39ef49b517ea"><code>39ef49b517ea</code></a></td><td>2023-04-26</td><td>Kostya: call-stack depth as a feature domain. The &ldquo;rich coverage signal&rdquo; direction, continued after the merge.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/0d7536a6519a"><code>0d7536a6519a</code></a></td><td>2023-05-04</td><td>Smaller feature domains, so the <code>FeatureSet</code> can be collision-free.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/29e095ff0dba"><code>29e095ff0dba</code></a></td><td>2023-05-04</td><td>Fork-server robustness: failed launches and sudden deaths, the out-of-process engine's daily life.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/eaef749d7d6e"><code>eaef749d7d6e</code></a></td><td>2023-05-25</td><td><b>Step 1.</b> Split <code>domain_core.h</code> out of <code>domain.h</code> (+1072/&minus;1039) &ldquo;for domain-based mutation in Centipede&rdquo;: the domains can now link without protobuf or RE2.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/b9d7af4e7dc5"><code>b9d7af4e7dc5</code></a></td><td>2023-05-25</td><td><b>Step 2.</b> <code>SetExecutionCoverage</code>, so that Centipede can inject comparison records &ldquo;consumed by the FuzzTest mutator&rdquo;.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/fc4c196455c3"><code>fc4c196455c3</code></a></td><td>2023-05-25</td><td><b>Step 3.</b> <code>FuzzTestMutator</code> becomes the default mutator in <code>CentipedeCallbacks</code>, with a temporary flag to go back to the libFuzzer-style <code>ByteArrayMutator</code>.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/89240957fb81"><code>89240957fb81</code></a></td><td>2023-06-01</td><td>Multiple user feature domains: the <code>__centipede_extra_features</code> encoding Part&nbsp;4 relies on.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/a0b498af8cef"><code>a0b498af8cef</code></a></td><td>2023-07-06</td><td><code>ExecutionMetadata</code>: what a runner reports per input, starting with CMP entries.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/756bd06c3a4a"><code>756bd06c3a4a</code></a></td><td>2023-08-16</td><td><b>Step 4.</b> The runner interface becomes a C++ <code>RunnerCallbacks</code> class, so the runner can drive something other than <code>LLVMFuzzerTestOneInput</code>.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/52d3671a3d0c"><code>52d3671a3d0c</code></a></td><td>2023-08-24</td><td><b>Step 5.</b> &ldquo;Implement Centipede adaptor and runner callbacks for FuzzTest/Centipede integration&rdquo;: <code>centipede_adaptor.cc</code>. A <code>FUZZ_TEST</code> can now run on Centipede.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/c7db83ddcdb8"><code>c7db83ddcdb8</code></a></td><td>2023-10-13</td><td>&ldquo;Make the Centipede integration available in OSS/Bazel. No documentation yet.&rdquo; Introduces the <code>centipede_integration</code> flag, default <code>False</code>.</td></tr>
+</table>
+</div>
+
+<p>The order is the lesson. Centipede arrived with a byte-array mutator inherited from libFuzzer's
+ideas. Act III replaces it with FuzzTest's domains, so the merged engine's input is typed. The
+direction of travel is one-way: FuzzTest's <em>front-end</em> wins, and Centipede's
+<em>back-end</em> wins. What disappears, as a default, is the libFuzzer-shaped middle that both
+projects had started from.</p>
+
+<h2 id="ft-act4">11.4 Act IV (2023&ndash;2025): one binary is controller and runner</h2>
+
+<p>Classic Centipede is two binaries: a <code>centipede</code> controller and a target built with
+Centipede's runner. That is awkward for a GoogleTest, which is supposed to be one
+<code>cc_test</code>. Act IV collapses the two into one executable and gives it a persistent home for
+findings.</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 11.3</b> Act IV commits: a single test binary, a corpus database, and parallel jobs.</caption>
+<tr><th>Commit</th><th>Date</th><th>What changed, and why it matters</th></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/7c9e6b8a67ae"><code>7c9e6b8a67ae</code></a></td><td>2023-11-08</td><td>Default corpus support: <code>--corpus_database</code> and <code>reproduce_findings_as_separate_tests</code>. Findings become regression tests.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/0be6134758e3"><code>0be6134758e3</code></a>, <a href="https://github.com/google/fuzztest/commit/657f2b6981ba"><code>657f2b6981ba</code></a></td><td>2023-11</td><td>Riegeli storage, then Riegeli by default, for corpus and feature shards.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/3e415f20f15b"><code>3e415f20f15b</code></a></td><td>2024-05-03</td><td>A code path in <code>CentipedeMain</code> that updates the fuzz-test corpus database (+307 lines).</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/b603970bc044"><code>b603970bc044</code></a></td><td>2024-05-03</td><td>&ldquo;Execv to Centipede in multi-process mode&rdquo;: the test binary hands control to the controller, which runs the same binary as its runner.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/4c740a04e0b3"><code>4c740a04e0b3</code></a></td><td>2024-12-10</td><td><code>FUZZTEST_NO_LEGACY_COVERAGE</code>: the legacy sancov hooks can be compiled out.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/c942c2949ab4"><code>c942c2949ab4</code></a></td><td>2024-10-21</td><td><code>--config=fuzztest-experimental</code> and a separate <code>--config=asan</code>: the user-visible switch to Centipede, with <code>trace-pc-guard,pc-table,trace-loads,trace-cmp</code>. <code>--config=fuzztest</code> is left as it was.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/dfb10bca30e4"><code>dfb10bca30e4</code></a></td><td>2024-10-28</td><td><code>--jobs</code>: parallel out-of-process fuzzing from a GoogleTest.</td></tr>
+<tr><td><a href="https://github.com/google/fuzztest/commit/81d76d6b1d3e"><code>81d76d6b1d3e</code></a>, <a href="https://github.com/google/fuzztest/commit/d9103dfcf5f2"><code>d9103dfcf5f2</code></a></td><td>2025-04/05</td><td>Crash IDs and exported reproducers from Centipede back to the FuzzTest report.</td></tr>
+</table>
+</div>
+
+<p>The result is the binary you run in Part&nbsp;4. The first lines of every lab transcript show the
+handover: the test binary starts, prints <code>FUZZTEST_PRNG_SEED=</code>, and then a
+<code>centipede.cc</code> log line names the same binary as its target.</p>
+
+<h2 id="ft-act5">11.5 Act V (2025&ndash;2026): consolidation, and what is still not true</h2>
+
+<p>The latest act has no single theme, which is itself a sign of maturity. A Rust framework appears
+(<a href="https://github.com/google/fuzztest/commit/741fd4068ec6"><code>741fd4068ec6</code></a>,
+2025-05-08), although the README still says &ldquo;Currently, only C++ is supported.&rdquo; The
+libFuzzer mode gets end-to-end tests
+(<a href="https://github.com/google/fuzztest/commit/f1e26613f669"><code>f1e26613f669</code></a>),
+which is the opposite of removing it. The <code>CentipedeIsPresent</code> and
+<code>__libfuzzer_is_present</code> marker symbols are removed
+(<a href="https://github.com/google/fuzztest/commit/14f2c567c75a"><code>14f2c567c75a</code></a>). And the
+newest commit in the checkout,
+<a href="https://github.com/google/fuzztest/commit/ed1ae14a62f9"><code>ed1ae14a62f9</code></a>
+(2026-10-14), is the exact inverse of
+<a href="https://github.com/google/fuzztest/commit/305237f07988"><code>305237f07988</code></a>
+from the day before: same subject, &ldquo;Fail loudly when FUZZ_TEST is used with custom main()
+without InitFuzzTest&rdquo;, and the same 17 files with 183 and 59 lines swapped. A rollback, in other
+words. The custom-<code>main</code> path is still being argued about.</p>
+
+<figure class="diagram-fig" id="fig-fuzztest-timeline">
+<img class="fig-light" src="img/21-fuzztest-timeline.svg" alt="Timeline of FuzzTest from 2022 to 2026 in five sections. Act I 2022: public import 658be28962db, FlatMap, the libFuzzer config, fuzz_for and the PRNG seed. 2023 first half: type erasure, CMake, WithSeeds, the Centipede squash a15547ee04e3 and Kostya's first commit, the domain_core split, SetExecutionCoverage, FuzzTestMutator in Centipede, multiple user feature domains. 2023 second half: RunnerCallbacks, the Centipede adaptor, the centipede_integration flag defaulting to False, corpus database and Riegeli. 2024 to 2025: execv to Centipede, corpus DB in CentipedeMain, fuzztest-experimental, jobs, crash IDs, reproducers, Rust. 2025 to 2026: libFuzzer-mode tests, marker symbols removed, the InitFuzzTest check rolled back."
+     decoding="async">
+<img class="fig-dark" src="img/21-fuzztest-timeline.dark.svg" alt="" aria-hidden="true"
+     decoding="async">
+<figcaption><b class="cnum">Figure 11.1</b> Five acts in four years. Act I is front-end work on an
+in-process engine; Act II imports a back-end built for scale; Acts III and IV connect the two; Act V
+consolidates without yet making Centipede the default.</figcaption>
+</figure>
+
+<div class="card"><b>Counting the authorship.</b> <code>git shortlog -sn</code> at the pinned commit:
+Xinhao Yuan 404, FuzzTest Team 219, Filip Niksic 209, Sergey Shevchenko 204, Hadi Ravanbakhsh 153,
+L&aacute;szl&oacute; Szekeres 109, Kostya Serebryany 85. Of the 1700 commits, 836 touch
+<code>centipede/</code> and 645 touch <code>fuzztest/</code>. More work has gone into the engine
+since the merge than into the framework, which is what you would expect if the back-end is where the
+open problems are.</div>
+
+<h2 id="ft-centipede">11.6 Centipede up close: controller, runner, fork server</h2>
+
+<p>When you run <code>harden_fuzztest --fuzz=Harden.LocalCommands</code> on a
+<code>fuzztest-experimental</code> build, <code>CentipedeFuzzerAdaptor::Run</code>
+(<code>centipede_adaptor.cc:885</code>) first asks which role this process has:</p>
+
+<span class="src"><b class="cnum">List 11.2</b> fuzztest/internal/centipede_adaptor.cc:888 &mdash; one binary, two roles, chosen by an environment variable</span>
+<pre><code>  // When the CENTIPEDE_RUNNER_FLAGS env var exists, the current process is
+  // considered a child process spawned by the Centipede binary as the runner,
+  // and we should not run CentipedeMain in this process.
+  const bool runner_mode = IsCentipedeRunner();
+  const bool is_running_property_function_in_this_process =
+      runner_mode ||
+      (configuration.crashing_input_to_reproduce.has_value() &amp;&amp;
+       configuration.replay_in_single_process) ||
+      std::getenv(<mark>"FUZZTEST_REPLAY"</mark>) ||
+      std::getenv(<mark>"FUZZTEST_MINIMIZE_REPRODUCER"</mark>);</code></pre>
+
+<p>Without the variable, the process becomes the <b>controller</b>: it runs <code>CentipedeMain</code>,
+owns the corpus and the <code>FeatureSet</code>, and never calls your property. It launches the same
+binary again with <code>CENTIPEDE_RUNNER_FLAGS</code> set. A <b>fork server</b>
+(<code>runner_fork_server.cc</code>, started from a very early constructor and driven over two named
+FIFOs) keeps a warm parent and forks runners from it. The <b>runner</b> receives batches of inputs
+(1000 by default, <code>--batch_size</code>) through shared-memory blob sequences, built on
+<code>memfd_create</code> or <code>shm_open</code>. It mutates them with FuzzTest's domains, executes
+the property on each one through <code>CentipedeAdaptorRunnerCallbacks::Execute</code>, and writes
+back each input's features. In persistent mode one runner process serves batch after batch, so
+anything the property sets up lazily (a KCOV fd, an mmap'd page) survives between inputs. It does
+<em>not</em> survive the fork, which is why the lab's harness re-opens both when its pid changes.</p>
+
+<figure class="diagram-fig" id="fig-controller-runner">
+<img class="fig-light" src="img/24-controller-runner.svg" alt="Sequence diagram with five participants: test binary, controller, fork server, runner, shared memory. The test binary hands control to the controller in the same process. The controller launches the binary again as a runner via the fork server, which forks runners and stays warm. The controller writes a batch into shared memory; the runner mutates with FuzzTest domains, executes the property, and writes per-input features back. The controller updates its FeatureSet and weights by rarity. If a runner died or a property failed, the controller re-runs the batch one input at a time, finds the reproducing input, saves it and exits on crash. A note says a crash kills a runner, never the controller."
+     decoding="async">
+<img class="fig-dark" src="img/24-controller-runner.dark.svg" alt="" aria-hidden="true"
+     decoding="async">
+<figcaption><b class="cnum">Figure 11.2</b> Centipede's execution model as FuzzTest uses it. Compare
+Figure&nbsp;4.4: libFuzzer's <code>-fork</code> is a parent that runs whole fuzzing jobs; Centipede's
+controller runs <em>no</em> fuzzing logic in the target's process at all.</figcaption>
+</figure>
+
+<p>The crash path is the part to remember. When a batch fails, the controller does not know which input
+did it, so it re-executes the batch one input at a time (&ldquo;ReportCrash[1]: Executing inputs
+one-by-one, trying to find the reproducer&rdquo; in every lab log). Only an input that fails again is
+saved, under <code>&lt;db&gt;/&lt;binary&gt;/workdir.000/&lt;test&gt;/crashes.000000/&lt;sha1&gt;</code>.
+FuzzTest turns on Centipede's <code>exit_on_crash</code> unless you pass
+<code>--continue_after_crash</code>. That re-execution step quietly requires the oracle to be
+<em>repeatable</em>. &sect;12.5 shows a kernel oracle that was not, and what Centipede printed
+instead: &ldquo;Crash was not observed when running inputs one-by-one&rdquo;.</p>
+
+<h2 id="ft-features">11.7 Features, domains and rarity: Centipede's coverage model</h2>
+
+<p>libFuzzer numbers features on one line, region after region (&sect;4.2, Figure&nbsp;4.1).
+Centipede does the same thing with fixed-width <em>domains</em>. A <code>feature_t</code> is a 64-bit
+integer; <code>centipede/feature.h</code> declares each domain with <code>__COUNTER__</code>, and each
+spans <code>kDomainSize = 1&lt;&lt;27</code> ids. A feature is <code>domain.begin() + number %
+kDomainSize</code> (<code>ConvertToMe</code>, <code>feature.h:83</code>).</p>
+
+<figure class="diagram-fig" id="fig-centipede-domains">
+<img class="fig-light" src="img/25-centipede-feature-domains.svg" alt="A horizontal number line of Centipede feature domains: kUnknown at 0, kPCs, k8bitCounters, kDataFlow, the kCMP family, kCallStack with kBoundedPath and kPCPair, then kUserDomains 0 to 15 where the extra-features section lands, then kLastDomain. A note says each domain spans 2 to the 27 ids and a feature is the domain begin plus the id modulo 2 to the 27."
+     decoding="async">
+<img class="fig-dark" src="img/25-centipede-feature-domains.dark.svg" alt="" aria-hidden="true"
+     decoding="async">
+<figcaption><b class="cnum">Figure 11.3</b> Centipede's feature number line. Compare
+Figure&nbsp;4.1: the shape is libFuzzer's, but every source gets its own fixed slice, and sixteen
+slices are reserved for features the target computes itself.</figcaption>
+</figure>
+
+<p>Domains are not only bookkeeping; they enter the schedule. Centipede's default corpus weight is
+<code>FeatureRarity</code>, and <code>FeatureSet::ComputeRarityWeight</code> scores an input by
+summing, over its features, a per-feature rarity times a per-domain weight:</p>
+
+<span class="src"><b class="cnum">List 11.3</b> centipede/feature_set.cc:164 &mdash; ComputeRarityWeight: rare features in small domains are worth the most</span>
+<pre><code>  for (auto feature : features) {
+    // The less frequent is the feature, the more valuable it is.
+    // (frequency == 1) =&gt; (weight == 256)
+    // (frequency == 2) =&gt; (weight == 128)
+    // The less frequent is the domain, the more valuable are its features.
+    auto domain_id = feature_domains::Domain::FeatureToDomainId(feature);
+    auto features_in_domain = features_per_domain_[domain_id];
+    auto <mark>domain_weight = num_features_ / features_in_domain</mark>;
+    ...
+    weight += <mark>domain_weight * (256 / feature_frequency)</mark>;
+  }</code></pre>
+
+<p>The consequence for a kernel harness is worth stating. User features from the kernel land in their
+own domains. In the lab's local run the status line reads <code>usr0: 28 usr1: 42</code> against
+<code>ft: 218</code>. Those domains are small, so their <code>domain_weight</code> is large, and an
+input that reaches a new kernel PC is scheduled more often than one that only reaches a new userspace
+counter. Under libFuzzer the KCOV bytes and the compiler's bytes are interchangeable (&sect;2.2); under
+Centipede they are separately visible and separately weighted.</p>
+
+<p>The seam itself is the user-domain section. The contract is documented only in the example target
+<code>centipede/testing/user_defined_features_target.cc</code>, which still carries
+&ldquo;TODO(kcc): graduate this from an experiment and document properly&rdquo;, and in the loop in
+<code>sancov_state.cc</code> that consumes it:</p>
+
+<span class="src"><b class="cnum">List 11.4</b> centipede/sancov_state.cc:492 &mdash; the consumer of __centipede_extra_features: domain in the high half, id in the low half, zero means unset</span>
+<pre><code>  // Copy the features from __centipede_extra_features to g_features.
+  // Zero features are ignored - we treat them as default (unset) values.
+  for (auto* p = sancov_state-&gt;user_defined_begin;
+       p != sancov_state-&gt;user_defined_end; ++p) {
+    if (auto user_feature = *p) {
+      // User domain ID is upper 32 bits
+      feature_t user_domain_id = <mark>user_feature &gt;&gt; 32</mark>;
+      // User feature ID is lower 32 bits.
+      feature_t user_feature_id = <mark>user_feature &amp; ((1ULL &lt;&lt; 32) - 1)</mark>;
+      user_domain_id %= std::size(feature_domains::kUserDomains);
+      feature_handler(feature_domains::kUserDomains[user_domain_id].ConvertToMe(
+          user_feature_id));
+      <mark>*p = 0;  // cleanup for the next iteration.</mark>
+    }
+  }</code></pre>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 11.4</b> The two extra-coverage seams compared, field by field.</caption>
+<tr><th></th><th><code>__libfuzzer_extra_counters</code> (&sect;2.2)</th><th><code>__centipede_extra_features</code></th></tr>
+<tr><td>Element</td><td><code>uint8_t</code> counter</td><td><code>uint64_t</code> feature</td></tr>
+<tr><td>Meaning of a value</td><td>a hit count, bucketed into 8 features</td><td>the feature <em>itself</em>: domain in bits 63&ndash;32, id in 31&ndash;0</td></tr>
+<tr><td>Position in the array</td><td>is the feature identity</td><td>irrelevant; order and duplicates do not matter</td></tr>
+<tr><td>Reset</td><td>by the engine before each run</td><td>by the runner after reading (<code>*p = 0</code>)</td></tr>
+<tr><td>Read by</td><td>libFuzzer; FuzzTest's libFuzzer mode</td><td>Centipede runners only; the legacy FuzzTest engine ignores it</td></tr>
+<tr><td>Separately weighted</td><td>no</td><td>yes, by domain size</td></tr>
+</table>
+</div>
+
+<p>Because a value is the feature, there is a trap a libFuzzer user will step into: an id of zero in
+domain zero is the integer 0, which means &ldquo;unset&rdquo; and is silently dropped. The lab's
+<code>MakeFeature</code> ORs in a low bit for that reason (&sect;12.4).</p>
+
+<h2 id="ft-synthesis">11.8 The core design, restated</h2>
+
+<p>Put the five acts together and FuzzTest's design reduces to two decisions, each inherited from a
+different parent.</p>
+
+<ul>
+  <li><b>The unit of fuzzing is a typed property</b>, from FuzzTest's own lineage. This moves the
+      decoder into domains, the oracle into ordinary assertions, and the reproducer into a typed value
+      that prints as a regression test. It is why engineers write FuzzTests where they did not write
+      fuzz targets; the README says it &ldquo;has replaced the old style of writing fuzz targets&rdquo;
+      at Google.</li>
+  <li><b>Execution is out of process</b>, from Centipede. This makes a crash a runner's problem, makes
+      thousands of jobs a configuration rather than a project, and lets coverage be a rich,
+      multi-domain feature set instead of one counter array.</li>
+</ul>
+
+<p>libFuzzer contributed the shape that both parents started from (instrument, execute, score,
+select, mutate) and survives as the third engine, for compatibility. That is the sense in which
+FuzzTest is libFuzzer's successor. It is not a better version of the same loop; it is the loop with
+both ends replaced. It is also why the preface's advice holds. Having read libFuzzer line by line, you
+recognise every part of Centipede, and you can tell which parts are new.</p>
+
+<div class="ex">
+  <h4>Exercises</h4>
+  <ol>
+    <li>Run <code>git log --format='%h %ad %s' --date=short -- fuzztest/internal/centipede_adaptor.cc
+        | tail</code> and find the first five commits after <code>52d3671a3d0c</code>. Which of them
+        changed what the runner reports back?</li>
+    <li>Compute <code>ComputeRarityWeight</code> by hand for an input with three features: one kernel PC
+        seen once (user domain 0 holds 25 features), and two userspace PCs seen four times each (the PC
+        domain holds 150 features); take <code>num_features_ = 200</code>.</li>
+    <li>Write an <code>__centipede_extra_features</code> producer that emits the <em>value</em> of a
+        variable, bucketed, in user domain 3. What happens to your feature ids above
+        <code>1&lt;&lt;27</code>?</li>
+  </ol>
+</div>
+
+<div class="recap"><span class="glabel">Chapter 11 &middot; recap</span><h4>Keywords to remember</h4><div class="kw"><span class="tag">a15547ee04e3</span><span class="tag">squash, not merge</span><span class="tag">consolidate</span><span class="tag">domain_core</span><span class="tag">FuzzTestMutator</span><span class="tag">RunnerCallbacks</span><span class="tag">centipede_adaptor</span><span class="tag">centipede_integration = False</span><span class="tag">controller / runner</span><span class="tag">CENTIPEDE_RUNNER_FLAGS</span><span class="tag">fork server</span><span class="tag">feature domain</span><span class="tag">rarity weight</span><span class="tag">__centipede_extra_features</span></div><h4>Did you get it? Self-check</h4><ul class="check"><li><label><input type="checkbox"><span>I can state, citing its README, what Centipede was built for and when it says to use libFuzzer instead.</span></label></li><li><label><input type="checkbox"><span>I can list the five steps of Act III in order and say why the order mattered.</span></label></li><li><label><input type="checkbox"><span>I can trace one failing input from the runner to <code>crashes.000000/</code>, including the one-by-one re-run.</span></label></li><li><label><input type="checkbox"><span>I can encode a user feature correctly and explain why 0 is lost.</span></label></li><li><label><input type="checkbox"><span>I can explain FuzzTest as &ldquo;both ends of libFuzzer's loop replaced&rdquo;.</span></label></li></ul></div>
+
+<div class="partclose">
+  <span class="plabel">Part 3 &middot; wrap-up</span>
+  <h3>A typed front-end on an out-of-process engine</h3>
+  <p>FuzzTest began as a better way to write a fuzz target and found that its in-process engine was the
+  weak half. Centipede began as a better engine and had no front-end people wanted to write. The squash
+  of April 2023 and the two years of wiring after it produced one product with both halves. Part&nbsp;4
+  puts that product against the same kernel drivers as Part&nbsp;2, and against a new driver whose bug
+  only a property can see.</p>
+  <div class="ex">
+    <h4>Further exercises &mdash; think first, then open the answer</h4>
+    <ol>
+      <li>You build with <code>--config=fuzztest</code>, publish KCOV PCs into
+          <code>__centipede_extra_features</code>, and the corpus never grows beyond what the harness's
+          own code produces. Why?
+        <details class="ans"><summary>Answer</summary><div class="body"><code>--config=fuzztest</code>
+          is the legacy in-process engine. It reads only the 8-bit counters of the first DSO; the
+          extra-features section is consumed by Centipede's runner (<code>sancov_state.cc</code>), which
+          is not linked. Build with <code>--config=fuzztest-experimental</code> (&sect;10.4,
+          &sect;11.7).</div></details></li>
+      <li>Why did the merge replace Centipede's mutator with FuzzTest's, and not the other way round?
+        <details class="ans"><summary>Answer</summary><div class="body">Because the users' tests were
+          written against FuzzTest's typed API. A byte-array mutator cannot respect a
+          <code>VectorOf(StructOf(...))</code> domain, while the domain's own <code>Mutate</code>
+          can run anywhere once it is linkable (<code>eaef749d7d6e</code>) and fed comparison data
+          (<code>b9d7af4e7dc5</code>). The front-end defines the input type, so it owns mutation
+          (&sect;11.3).</div></details></li>
+      <li>A property fails under Centipede, but no crash file is saved and the log says the crash was
+          not observed one-by-one. What property of your oracle should you suspect?
+        <details class="ans"><summary>Answer</summary><div class="body">That it is not repeatable. The
+          controller re-runs the batch one input at a time and saves only an input that fails again.
+          State that persists across inputs, such as a sticky kernel taint bit, a one-shot KASAN report
+          or a global counter, makes the second run pass (&sect;11.6, &sect;12.5).</div></details></li>
+    </ol>
+  </div>
+</div>
+
+<div class="bookpart" id="part-4">
+  <span class="plabel">Part 4</span>
+  <div class="ptitle">Practical lab &amp; contribution &mdash; FuzzTest against the same kernel drivers</div>
+  <p>Part&nbsp;4 repeats Chapter&nbsp;6's experiment with the engine from Part&nbsp;3, on the same
+  virtme-ng guest and the same <code>samples/harden</code> drivers. It adds one driver that only
+  FuzzTest's way of working can test well. <b>Chapter&nbsp;12</b> is the lab. It covers the build
+  route (FuzzTest's Centipede engine needs Bazel), the coverage seam (KCOV into
+  <code>__centipede_extra_features</code>), and the oracle (a KASAN report that the kernel survives,
+  turned into a failing property). Typed harnesses then find the planted bugs in both drivers. A new
+  driver, <code>harden_ledger</code>, has a quota-accounting bug that no sanitizer reports, and a
+  model-based property finds it in a fraction of a second. Every number in the chapter comes from runs
+  on the lab machine, including the ones that went wrong. <b>Chapter&nbsp;13</b> lists the gaps
+  those runs exposed, on the FuzzTest side and the kernel side, as candidate first patches.</p>
+  <div class="know">
+    <span class="glabel">What you will know after Part&nbsp;4</span>
+    <ul>
+      <li>How to build FuzzTest harnesses for both engines from a Bazel workspace pinned to the
+          commit Part&nbsp;3 studied, and the three build traps that cost this lab a day.</li>
+      <li>How to feed KCOV into Centipede as user features, and how to show that the engine sees
+          them (<code>usr0</code>/<code>usr1</code> in the status line).</li>
+      <li>How to turn a KASAN report into a FuzzTest failure without killing the guest, and why the
+          oracle must be repeatable for Centipede to save the finding.</li>
+      <li>How to write a stateful, model-based property for a kernel API, and why it finds a bug that
+          coverage plus KASAN cannot.</li>
+      <li>What the measurements do and do not show, including an ablation in which the kernel
+          coverage turned out not to matter for these bugs, and where to contribute next.</li>
+    </ul>
+  </div>
+</div>
+
+
+<div class="parthead" id="chapter-12">
+  <div class="eyebrow">Chapter 12</div>
+  <h2 class="chtitle">The FuzzTest kernel lab: typed harnesses, Centipede features, and oracles you write</h2>
+  <p style="margin:0;color:var(--muted);">Chapter&nbsp;6 wired libFuzzer to a kernel driver with
+  four ioctls and a counter array. This chapter does the same with FuzzTest and asks what changes.
+  Mostly it is the parts around the loop. The input is typed, so the harness no longer parses
+  bytes. Coverage is a set of features, so the seam has a new encoding. The oracle can be any
+  assertion, so a kernel bug no longer has to panic the guest to be reported. The lab tree is the one
+  from Chapter&nbsp;6 (linux <code>249a1b3322ca</code>, branch
+  <code>libfuzzer-fuzztest-study</code>) with the additions listed in &sect;12.1. FuzzTest is pinned to
+  <code>ed1ae14a62f9</code>.</p>
+</div>
+
+<div class="goals">
+  <span class="glabel">Before you start · Chapter 12</span>
+  <p class="lead">After this chapter you will be able to:</p>
+  <ul>
+    <li>Build the kernel and the FuzzTest harnesses with <code>lab.sh build</code> and
+        <code>lab.sh fuzztest-build</code>, and diagnose the three failure modes this lab hit.</li>
+    <li>Run each FuzzTest lab, read Centipede's status line, and find the saved reproducer.</li>
+    <li>Explain the KCOV-to-feature encoding and the fork rule for per-process kernel state.</li>
+    <li>Choose between <code>kasan.fault=panic</code> and <code>=report</code> for a given lab, and
+        build a repeatable oracle on <code>/dev/kmsg</code>.</li>
+    <li>Write a reference model for a kernel API and a property that compares against it after every
+        call.</li>
+    <li>Design an ablation that tests whether a guidance signal is actually helping.</li>
+  </ul>
+</div>
+
+<h2 id="ftlab-layout">12.1 The layout: what Part 4 adds to the lab tree</h2>
+
+<p>Everything from Chapter&nbsp;6 is unchanged and still works: <code>bash lab.sh local</code> still
+runs the libFuzzer harness. Part&nbsp;4 adds one driver, one Bazel workspace and six
+<code>lab.sh</code> subcommands:</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 12.1</b> Files Part 4 adds or changes in the lab tree, and what each is for.</caption>
+<tr><th>Path</th><th>What it is</th></tr>
+<tr><td><code>samples/harden/ledger.c</code></td><td>new driver <code>/dev/harden_ledger</code>: a per-file memory quota with a planted accounting bug (&sect;12.8). Built by the existing <code>CONFIG_SAMPLE_HARDEN=m</code>.</td></tr>
+<tr><td><code>samples/harden/{Makefile,Kconfig}</code></td><td><code>harden_ledger-y := ledger.o</code>, and help text naming the third driver</td></tr>
+<tr><td><code>tools/harden/fuzztest/MODULE.bazel</code></td><td>a Bazel module: <code>git_override</code> of FuzzTest at <code>ed1ae14a62f96483411068253a2d080c389bf8b0</code>, plus the two <code>single_version_override</code>s FuzzTest's own module needs from the root</td></tr>
+<tr><td><code>tools/harden/fuzztest/.bazelrc</code></td><td>clang, C++20, <code>-O1</code> and <code>-fno-builtin</code> (&sect;12.2 explains both), and <code>try-import fuzztest.bazelrc</code></td></tr>
+<tr><td><code>tools/harden/fuzztest/kcov_feedback.{h,cc}</code></td><td>KCOV session per thread, re-created after fork; kernel PCs to user features; the <code>/dev/kmsg</code> KASAN oracle; <code>HARDEN_REPRO</code></td></tr>
+<tr><td><code>tools/harden/fuzztest/userspace_fuzztest.cc</code></td><td>the warm-up: <code>Userspace.Bytes</code>, <code>.Typed</code>, <code>.RoundTrip</code></td></tr>
+<tr><td><code>tools/harden/fuzztest/harden_fuzztest.cc</code></td><td><code>Harden.RawPage</code>, <code>.LocalCommands</code>, <code>.RemoteCommands</code> for the Chapter&nbsp;6 drivers</td></tr>
+<tr><td><code>tools/harden/fuzztest/ledger_fuzztest.cc</code></td><td><code>HardenLedger.KernelMatchesModel</code> plus two ordinary unit tests that pass</td></tr>
+<tr><td><code>lab.sh</code></td><td><code>fuzztest-{build,userspace,local,remote,raw,ledger}</code>; a fixed <code>build</code> step; <code>--memory</code> for the guest</td></tr>
+</table>
+</div>
+
+<span class="src"><b class="cnum">List 12.1</b> lab.sh &mdash; the FuzzTest subcommands and the environment knobs they read</span>
+<pre><code>bash lab.sh build                 # kernel + all three modules (once)
+bash lab.sh fuzztest-build        # bazel build; ENGINE=centipede (default) or legacy
+bash lab.sh fuzztest-userspace    # no VM: Userspace.{Bytes,Typed,RoundTrip}
+bash lab.sh fuzztest-local        # Harden.LocalCommands  vs harden_local.ko
+bash lab.sh fuzztest-remote       # Harden.RemoteCommands vs harden_remote.ko
+bash lab.sh fuzztest-raw          # Harden.RawPage        vs harden_local.ko
+bash lab.sh fuzztest-ledger       # HardenLedger.KernelMatchesModel vs harden_ledger.ko
+
+# knobs:  FUZZ_FOR=5m   ENGINE=centipede|legacy   KASAN_FAULT=report|panic
+#         REPLAY=&lt;crash file&gt;   CORPUS_DB=&lt;dir&gt;   HARDEN_NO_FEATURES=1   HARDEN_TRACE=1</code></pre>
+
+<p>The kernel side of each lab is exactly Chapter&nbsp;6's: <code>vng --rw</code> boots the built
+kernel with the host filesystem shared, mounts debugfs, loads the module, prints its
+<code>.text</code> base for &sect;6.12's arithmetic, and runs the harness. Two things differ. The boot
+line defaults to <code>kasan.fault=report kasan_multi_shot</code> instead of <code>=panic</code>
+(&sect;12.5), and findings go to a corpus database on the host,
+<code>tools/harden/fuzztest/corpus-db/</code>, rather than a <code>crash-</code> file.</p>
+
+<h2 id="ftlab-build">12.2 Building: two scripts and three traps</h2>
+
+<p>FuzzTest's CMake build cannot produce a Centipede binary (&sect;10.4), so the harnesses are a Bazel
+workspace. Bazel itself came from bazelisk&nbsp;v1.26.0, which read
+<code>.bazelversion</code> and fetched Bazel&nbsp;8.7.0. <code>lab.sh fuzztest-build</code> generates
+<code>fuzztest.bazelrc</code> once with FuzzTest's own <code>setup_configs</code>, then builds:</p>
+
+<span class="src"><b class="cnum">List 12.2</b> lab.sh fuzztest_build() &mdash; one workspace, two engines, binaries copied out of bazel-bin</span>
+<pre><code>	case "$FT_ENGINE" in
+	centipede) config="<mark>--config=fuzztest-experimental --config=asan</mark>" ;;
+	legacy)    config="<mark>--config=fuzztest</mark>" ;;
+	esac
+	cd "$FT_DIR"
+	[ -s fuzztest.bazelrc ] ||
+		bazel run @com_google_fuzztest//bazel:setup_configs &gt; fuzztest.bazelrc
+	bazel build $config :all
+	for t in userspace_fuzztest harden_fuzztest ledger_fuzztest; do
+		install -m 0755 "bazel-bin/$t" "$FT_OUT/$t"     # out-centipede/ or out-legacy/
+	done</code></pre>
+
+<p>A first build fetches FuzzTest, Abseil, RE2, Riegeli, protobuf and googletest and takes about six
+minutes on eight cores; later builds take seconds to a few minutes. The interesting part is what went
+wrong on the way. Each of these traps produces a binary that runs and reports nothing useful, which
+is the worst kind of failure.</p>
+
+<h3>Trap 1: the kernel config that was never applied</h3>
+
+<p>Chapter&nbsp;6's <code>lab.sh build</code> called <code>vng --build</code> with a list of
+<code>--configitem</code>s. On this machine the tree already had a <code>.config</code> from other
+work. The build completed in eight minutes, and its own summary said <code>harden_local.ko
+MISSING</code> for all four modules. <code>.config</code> had <code>CONFIG_KASAN=y</code> but no
+<code>CONFIG_SAMPLES</code>. The reason is in virtme-ng's <code>run.py</code>:
+<code>if not args.force and not args.kconfig: cmd.append("--no-update")</code>. With an existing
+<code>.config</code>, <code>vng --build</code> asks <code>virtme-configkernel</code> not to touch it,
+so every <code>--configitem</code> is silently ignored. The fix in <code>lab.sh</code> is to
+regenerate the config explicitly first, and then check that it stuck:</p>
+
+<span class="src"><b class="cnum">List 12.3</b> lab.sh build_kernel() &mdash; vng --kconfig first, because vng --build will not update an existing .config</span>
+<pre><code>	# Step 1: (re)generate .config. `vng --build` alone passes --no-update to
+	# virtme-configkernel when a .config already exists, so on a tree that
+	# was built before the --configitem list is silently IGNORED (and the
+	# sample modules never get built). `vng --kconfig` always rewrites it.
+	<mark>vng --kconfig LLVM=1 "${items[@]}"</mark>
+	if ! grep -q '^CONFIG_SAMPLE_HARDEN=m' .config; then
+		echo "lab.sh: CONFIG_SAMPLE_HARDEN=m did not stick in .config" &gt;&amp;2
+		exit 1
+	fi
+	# Step 2: build the kernel and the modules.
+	vng --build -j "$jobs" LLVM=1 "${items[@]}"</code></pre>
+
+<p>(<code>--force</code> would also work, but it can reset the git tree, so <code>lab.sh</code> does not
+use it. The previous <code>.config</code> was saved before the regeneration.) After the fix the same
+command printed <code>ok</code> for all four modules, and <code>harden_ledger.ko</code> was built by the
+same <code>CONFIG_SAMPLE_HARDEN=m</code>.</p>
+
+<h3>Trap 2: a recursion at <code>-O0</code></h3>
+
+<p>Bazel's default compilation mode is <code>fastbuild</code>, which means <code>-O0</code>. The first
+Centipede build of <code>userspace_fuzztest</code> crashed before running a single input, with a
+490-frame stack overflow:</p>
+
+<span class="src"><b class="cnum">List 12.4</b> the first Centipede run at -O0 &mdash; the runner's sancov callback calling an instrumented libstdc++ inline</span>
+<pre><code>#487 in UpdateLowestStackAndCheckLimit  centipede/sancov_callbacks.cc:283:5
+#488 in HandleOnePc                     centipede/sancov_callbacks.cc:304:5
+#489 in __sanitizer_cov_trace_pc_guard  centipede/sancov_callbacks.cc:410:3
+#490 in <mark>std::operator&amp;(std::memory_order, std::__memory_order_modifier)</mark>
+        /usr/lib/gcc/x86_64-linux-gnu/16/../../../../include/c++/16/bits/atomic_base.h:111
+==278323==ABORTING</code></pre>
+
+<p>Centipede's own sources are built with <code>-fsanitize-coverage=0</code>, but at <code>-O0</code> a
+small libstdc++ inline such as <code>std::operator&amp;</code> on <code>memory_order</code> stays an
+out-of-line COMDAT function. The linker keeps one copy, and it kept the one compiled with coverage
+from user code. Centipede's stack-limit check (<code>CheckStackLimit</code>, an atomic load) then
+called an instrumented function from inside <code>__sanitizer_cov_trace_pc_guard</code>, which
+called the callback again, and so on. At <code>-O1</code> the inline is inlined and the cycle
+disappears. The lab's <code>.bazelrc</code> therefore says <code>build --copt=-O1</code>. (This was
+observed with clang&nbsp;21.1.8 and GCC&nbsp;16's libstdc++; &sect;13.1 lists it as something to
+reproduce and report.)</p>
+
+<h3>Trap 3: the bug the optimiser deleted</h3>
+
+<p>With <code>-O1</code> in place both engines built. The Centipede binary found the warm-up bug in
+about a second, and the legacy binary did not find it in two minutes, 3.2&nbsp;million runs, stuck at
+16 edges, in four runs out of four. That looked like a dramatic result about the engines until the
+Centipede crash file was replayed on the legacy binary with <code>FUZZTEST_REPLAY</code>, and the
+legacy binary <em>passed</em>. Compiling <code>ParseHard</code> on its own shows why:</p>
+
+<span class="src"><b class="cnum">List 12.5</b> clang++ -O1 -fsanitize=address, with and without -fno-builtin &mdash; the calls left in ParseHard</span>
+<pre><code>== -O1 -fsanitize=address
+   R_X86_64_PLT32  __asan_report_load_n-0x4
+   R_X86_64_PLT32  __asan_report_load_n-0x4
+== -O1 -fsanitize=address -fno-builtin
+   R_X86_64_PLT32  __asan_stack_malloc_0-0x4
+   R_X86_64_PLT32  memcpy-0x4
+   R_X86_64_PLT32  memcmp-0x4
+   R_X86_64_PLT32  <mark>malloc</mark>-0x4
+   R_X86_64_PLT32  <mark>memcpy</mark>-0x4
+   R_X86_64_PLT32  <mark>free</mark>-0x4</code></pre>
+
+<p>Without <code>-fno-builtin</code>, clang treats <code>malloc</code>, <code>memcpy</code> and
+<code>free</code> as builtins. It sees a heap buffer that is written and freed but never read, and
+deletes all three. The overflow is gone from the binary. <code>--config=fuzztest-experimental</code>
+sets <code>-fno-builtin</code> and <code>--config=fuzztest</code> does not, so the comparison had been
+between a binary with the bug and one without. The lab's <code>.bazelrc</code> now sets
+<code>-fno-builtin</code> for both. Chapter&nbsp;6's userspace lab avoided the same trap by
+compiling at <code>-O0</code>. The general rule: before comparing engines, replay each engine's
+findings on the other's binary.</p>
+
+<div class="card"><b>A fourth, smaller trap: guest memory.</b> The first ledger run printed
+<code>__vm_enough_memory: ... bytes: 1109622784 not enough memory</code> and the runner segfaulted.
+virtme-ng's default guest RAM cannot hold an ASan-instrumented Centipede runner and its shared-memory
+blobs. <code>run_in_guest</code> now passes <code>--memory "${VM_MEMORY:-4G}"</code>.</div>
+
+<h2 id="ftlab-userspace">12.3 Warm-up: one parser, three properties</h2>
+
+<p>The warm-up needs no VM: <code>bash lab.sh fuzztest-userspace</code> runs the three properties of
+List&nbsp;10.1 in turn. The first lines of a run show which engine you are on. The section line is
+printed only by a Centipede runner, and the status lines are Centipede's
+<code>[S0.N]</code> format rather than the legacy <code>[*] Corpus size:</code>:</p>
+
+<span class="src"><b class="cnum">List 12.6</b> Userspace.Bytes on Centipede &mdash; start-up, the first status lines, and the report</span>
+<pre><code>section("__centipede_extra_features") detected with 65536 elements
+[ RUN      ] Userspace.Bytes
+FUZZTEST_PRNG_SEED=mNSohlXj1AFSgsmEofYpLP9UgJwEDW9J8e43Uy84OU0
+centipede.cc:398] [S0.32] init-done: ft: 15 cov: 8 df: 1 cmp: 6 corp: 2/2 ...
+centipede.cc:398] [S0.1000] new-feature: ft: 21 cov: 9 df: 1 cmp: 11 corp: 8/8 ... exec/s: 34697
+centipede.cc:398] [S0.2000] new-feature: ft: 27 cov: 10 df: 1 cmp: 16 corp: 12/12 ...
+CRASH LOG: ==280401==ERROR: AddressSanitizer: <mark>heap-buffer-overflow</mark> on address 0x7c1d53954aa4 ...
+CRASH LOG: READ of size 22197 at 0x7c1d53954aa4 thread T0
+CRASH LOG: Total runs: 21199
+CRASH LOG: === BUG FOUND!
+CRASH LOG: userspace_fuzztest.cc:68: Counterexample found for Userspace.Bytes.
+CRASH LOG: argument 0: <mark>"HARD\002\007\265VRRR\011\000\000\000\000\000\000\000"</mark>
+CRASH LOG: === Regression test draft
+CRASH LOG: TEST(Userspace, BytesRegression) {
+CRASH LOG:   Bytes(
+CRASH LOG:     std::string("HARD\002\007\265VRRR\t\000\000\000\000\000\000\000", 19)
+CRASH LOG:   );
+CRASH LOG: }
+centipede.cc:1128] ReportCrash[1]: Executing inputs one-by-one, trying to find the reproducer
+centipede.cc:125] ReportCrash[1]: Detected crash-reproducing input:
+Saving input to: ~/.cache/fuzztest/userspace_fuzztest/workdir.000/Userspace.Bytes/crashes.000000/90824a81...
+centipede.cc:507] --exit_on_crash is enabled; exiting soon</code></pre>
+
+<p>Read the counterexample against the header: <code>HARD</code>, version 2, kind 7, then a length of
+<code>0x56b5</code> = 22197 against an 11-byte payload. Every gate of &sect;6.7 is satisfied, and the
+engine found them from compare feedback alone; <code>cmp:</code> in the status line counts Centipede's
+CMP features. The report says <em>READ</em>, where Chapter&nbsp;6's userspace lab reported a WRITE.
+<code>memcpy(buf, payload, h.len)</code> overruns both its source and its destination, and ASan's
+interceptor checks the source range first. Depending on where the source lives, the same bug was
+reported in these runs as <code>heap-buffer-overflow</code>, as <code>stack-buffer-overflow</code>
+(when <code>Typed</code>'s short <code>std::string</code> sat in its inline buffer) and as
+<code>memcpy-param-overlap</code> (when the oversized ranges overlapped). Only the first check that
+fails gets a name.</p>
+
+<p>The other two properties make Chapter&nbsp;10's points with numbers. <code>Userspace.Typed</code>
+fixes the magic in the harness and was found in 4086 and 10211 runs, against 16&nbsp;657&ndash;26&nbsp;534
+for <code>Bytes</code>. <code>Userspace.RoundTrip</code>, whose only oracle is an
+<code>EXPECT_EQ</code>, failed on its first or fourth input. The report shows the property, not a
+crash:</p>
+
+<span class="src"><b class="cnum">List 12.7</b> Userspace.RoundTrip &mdash; a counterexample with no memory error, reported by GoogleTest</span>
+<pre><code>CRASH LOG: Expected equality of these values:
+CRASH LOG:   m-&gt;len
+CRASH LOG:     Which is: 256
+CRASH LOG:   len
+CRASH LOG:     Which is: 1
+CRASH LOG: Total runs: 1
+CRASH LOG: argument 0: 19
+CRASH LOG: argument 1: 35
+CRASH LOG: argument 2: 1</code></pre>
+
+<p>Finally, the two engines on the same <code>Bytes</code> property, after Trap&nbsp;3 was fixed:</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 12.2</b> Userspace.Bytes, three runs per engine, runs to the first finding as each engine reports it.</caption>
+<tr><th>Engine (binary)</th><th>Run 1</th><th>Run 2</th><th>Run 3</th><th>Report</th></tr>
+<tr><td>Centipede (<code>fuzztest-experimental</code>)</td><td>26&nbsp;534</td><td>16&nbsp;657</td><td>18&nbsp;474</td><td>heap-buffer-overflow &times;3</td></tr>
+<tr><td>legacy (<code>fuzztest</code>, with <code>-fno-builtin</code>)</td><td>97&nbsp;910</td><td>17&nbsp;265</td><td>5&nbsp;013</td><td>memcpy-param-overlap, heap-buffer-overflow &times;2</td></tr>
+<tr><td>legacy, <em>without</em> <code>-fno-builtin</code></td><td colspan="3">none in 60&nbsp;s &times;3 and 120&nbsp;s &times;1 (1.6&ndash;3.2 M runs)</td><td>the bug is not in the binary (List&nbsp;12.5)</td></tr>
+</table>
+</div>
+
+<p>Three runs each is not a benchmark, and the table does not support a ranking. What it supports is
+the narrower claim the lab needs: both engines find this bug in seconds once they are fuzzing the same
+code. The legacy engine prints its progress in-process, <code>[*] Corpus size: 21 | Edges covered:
+16 | ...</code>, and its report has no controller lines because there is no controller.</p>
+
+<h2 id="ftlab-seam">12.4 The seam: KCOV into <code>__centipede_extra_features</code></h2>
+
+<p>The kernel half of the harness is Chapter&nbsp;6's, line for line: <code>KCOV_INIT_TRACE</code>,
+<code>mmap</code>, <code>KCOV_ENABLE</code> (or <code>KCOV_REMOTE_ENABLE</code> with common handle
+<code>0x42</code>), reset <code>cover[0]</code>, ioctl, read <code>cover[1..n]</code>. What changes is
+where the PCs go. Instead of bumping a byte in <code>__libfuzzer_extra_counters</code>, the harness
+writes <em>features</em>:</p>
+
+<span class="src"><b class="cnum">List 12.8</b> tools/harden/fuzztest/kcov_feedback.cc:57 &mdash; the section, the encoding, and two user domains for kernel PCs and PC pairs</span>
+<pre><code>constexpr size_t kMaxKernelFeatures = 1 &lt;&lt; 16;
+__attribute__((<mark>used, retain, section("__centipede_extra_features")</mark>))
+uint64_t g_kernel_features[kMaxKernelFeatures];
+
+constexpr uint64_t kPcDomain = 0;    // -&gt; feature_domains::kUserDomains[0]
+constexpr uint64_t kEdgeDomain = 1;  // -&gt; feature_domains::kUserDomains[1]
+
+inline uint64_t MakeFeature(uint64_t domain, uint64_t hash) {
+  // Centipede reduces the id mod kDomainSize (1&lt;&lt;27) itself; we only have to
+  // keep the id inside 32 bits and make sure the whole value is never 0
+  // (0 means "unset" and is skipped).
+  uint32_t id = static_cast&lt;uint32_t&gt;(hash) <mark>| 1</mark>;
+  return (domain &lt;&lt; 32) | id;
+}
+
+size_t PublishKernelFeatures(std::span&lt;const unsigned long&gt; pcs) {
+  ...
+  for (unsigned long pc : pcs) {
+    if (out + 2 &gt; kMaxKernelFeatures) break;
+    g_kernel_features[out++] = MakeFeature(kPcDomain, Mix(pc));
+    // Edge = (previous PC, this PC). Order matters, so rotate before XOR.
+    g_kernel_features[out++] =
+        MakeFeature(kEdgeDomain, <mark>Mix(pc ^ ((prev &lt;&lt; 13) | (prev &gt;&gt; 51)))</mark>);
+    prev = pc;
+  }</code></pre>
+
+<p>Three design choices are worth defending. <b>Two domains</b>: a PC alone says a block ran, and a
+pair says which block ran after which. KCOV gives you the order for free, so the harness turns it into
+an edge feature, the same idea as Centipede's own <code>kPCPair</code>. <b>No counts</b>: libFuzzer
+buckets hit counts into eight features per counter (&sect;4.2). A Centipede user feature is a set
+member, so loop counts are deliberately dropped here. Adding a bucketed count into the id is
+Exercise&nbsp;3. <b>Low bit set</b>: as &sect;11.7 warned, a PC that hashes to 0 in domain 0 would
+otherwise vanish.</p>
+
+<p>Two more lines in <code>kcov_feedback.cc</code> deal with Centipede's process model, which
+libFuzzer never had to consider:</p>
+
+<span class="src"><b class="cnum">List 12.9</b> tools/harden/fuzztest/kcov_feedback.cc:105 &mdash; per-thread KCOV, re-opened when the tid changes after fork()</span>
+<pre><code>Kcov&amp; Kcov::ForThisThread(KcovMode mode) {
+  pid_t tid = static_cast&lt;pid_t&gt;(syscall(SYS_gettid));
+  if (!t_kcov.kcov || <mark>t_kcov.tid != tid</mark> || t_kcov.mode != mode) {
+    // First call on this thread, or we are a forked child (new tid): a
+    // session KCOV_ENABLE'd by the parent belongs to the parent's task and
+    // records nothing for us. Start a fresh session; the inherited mapping
+    // is left alone (it belongs to the parent).
+    t_kcov.kcov.release();
+    t_kcov.kcov.reset(new Kcov(mode));
+    ...</code></pre>
+
+<p>KCOV is per task: <code>KCOV_ENABLE</code> binds the session to the calling thread.
+<code>Documentation/dev-tools/kcov.rst</code> describes a fork-friendly pattern in which the parent
+opens the device, runs <code>KCOV_INIT_TRACE</code> and maps the buffer, and each forked child only
+calls <code>KCOV_ENABLE</code>. Centipede's fork server cannot use that pattern, because it forks from
+a very early constructor, before any harness code has run. A session <em>enabled</em> in one process
+belongs to that process's task and records nothing for a forked child. Everything kernel-facing in the
+harness (the KCOV session, the driver fd and its mapped page, the <code>/dev/kmsg</code> reader) is
+therefore opened lazily on first use inside the runner, and re-opened when the pid or tid changes. A
+libFuzzer-style harness that enables KCOV in <code>LLVMFuzzerInitialize</code> or a global
+constructor gets this wrong under any forking engine.</p>
+
+<p>Is the engine actually consuming the features? Centipede's status line answers it. In the local lab
+it starts at <code>init-done: ft: 201 cov: 51 ... usr0: 25 usr1: 29</code> and reaches
+<code>new-feature: ft: 218 ... usr0: 28 usr1: 42</code>. The <code>usr0</code> and <code>usr1</code>
+counts are kernel PCs and kernel PC pairs, and they grow. Build the same harness with
+<code>ENGINE=legacy</code> and the harness says so itself at start-up:</p>
+
+<span class="src"><b class="cnum">List 12.10</b> the harness's first line under each engine &mdash; FUZZTEST_USE_CENTIPEDE decides who reads the section</span>
+<pre><code>[harness] pid=232 KCOV LOCAL enabled; engine SEES kernel coverage          # ENGINE=centipede
+[harness] pid=236 KCOV LOCAL enabled; engine does NOT see kernel coverage  # ENGINE=legacy</code></pre>
+
+<h2 id="ftlab-oracle">12.5 The oracle: from a panic to a failing property</h2>
+
+<p>Chapter&nbsp;6 made KASAN fatal with <code>kasan.fault=panic</code>, because libFuzzer in the guest
+could not otherwise see a kernel bug (&sect;7.3). That works for FuzzTest too, but it throws away what
+Centipede offers. A panic kills the controller along with the runner, so there is no one-by-one
+re-run, no counterexample, no regression-test draft and no crash file. Only the
+<code>HARDEN_REPRO</code> bytes survive (&sect;6.14). The FuzzTest labs therefore boot with
+<code>kasan.fault=report</code>: KASAN prints its report and the kernel keeps going. The harness then
+has to notice the report itself and fail the property.</p>
+
+<p>The first version of the oracle used the taint bit. <code>end_report()</code> in
+<code>mm/kasan/report.c</code> calls <code>add_taint(TAINT_BAD_PAGE, ...)</code>, so bit&nbsp;5 of
+<code>/proc/sys/kernel/tainted</code> flips. The harness compared it before and after the ioctl. The
+run found the bug in 151 inputs and then printed this:</p>
+
+<span class="src"><b class="cnum">List 12.11</b> the taint-bit oracle &mdash; found, but not reproducible, so no crash file</span>
+<pre><code>CRASH LOG: harden_fuzztest.cc:134: Failure
+CRASH LOG: Value of: new_report
+CRASH LOG:   Actual: true
+CRASH LOG: argument 0: {Cmd{2, 49, 165, 40}, Cmd{0, 126, 105, 136}}
+centipede.cc:1128] ReportCrash[1]: Executing inputs one-by-one, trying to find the reproducer
+centipede.cc:1158] ReportCrash[1]: <mark>Crash was not observed when running inputs one-by-one</mark>
+centipede.cc:1177] ReportCrash[1]: Saving used inputs from batch to: .../crash...</code></pre>
+
+<p>The oracle was not repeatable. The taint bit is sticky: once set, &ldquo;before&rdquo; is already
+true. And KASAN reports only the first bug since boot unless told otherwise (<code>report_enabled()</code>
+is a <code>test_and_set_bit</code> on <code>KASAN_BIT_REPORTED</code>). So when the controller re-ran
+the failing input on its own (&sect;11.6), the second run looked clean, and Centipede could only save
+the whole batch as suspects. The fix has two parts:</p>
+
+<ul>
+  <li>Boot with <code>kasan_multi_shot</code> too, so <em>every</em> bad access is reported.</li>
+  <li>Detect a report by reading new <code>/dev/kmsg</code> records for <code>BUG: KASAN</code>. Each
+      process opens <code>/dev/kmsg</code> once, seeks to the end, drains it before each input and
+      reads after it, so only records produced during this input count.</li>
+</ul>
+
+<span class="src"><b class="cnum">List 12.12</b> tools/harden/fuzztest/harden_fuzztest.cc:84 &mdash; Driver::Run: page, drain, KCOV, ioctl, features, then the oracle</span>
+<pre><code>  bool Run(const uint8_t* bytes, size_t n, KcovMode mode) {
+    if (n &gt; kPageBytes) n = kPageBytes;
+    harden::LogReproducer(bytes, n);  // durable BEFORE the kernel may panic
+    memcpy(page_, bytes, n);
+    memset(page_ + n, 0, kPageBytes - n);
+
+    harden::Kcov&amp; kcov = harden::Kcov::ForThisThread(mode);
+    <mark>harden::KasanReportSinceLastCall();</mark>  // drain: start from "now"
+    kcov.Begin();
+    ioctl(fd_, HARDEN_RUN);  // remote: blocks until the kworker is done
+    harden::PublishKernelFeatures(kcov.End());
+    return <mark>harden::KasanReportSinceLastCall();</mark>
+  }
+...
+  EXPECT_FALSE(new_report)
+      &lt;&lt; "the kernel produced a KASAN report while parsing this " &lt;&lt; n
+      &lt;&lt; "-byte page — see the guest console (dmesg) for the splat";</code></pre>
+
+<figure class="diagram-fig" id="fig-fuzztest-lab-sequence">
+<img class="fig-light" src="img/26-fuzztest-lab-sequence.svg" alt="Sequence diagram of one lab iteration with six participants: runner, shared page, harden_local, KCOV buffer, /dev/kmsg, controller. The runner receives a well-formed vector of Cmd from the domain, serialises it into the shared page, drains /dev/kmsg, resets cover[0], and calls ioctl HARDEN_RUN. The driver records PCs into KCOV; if a SET_RAW command with flag 0xA5 and index at least 16 runs, KASAN logs slab-out-of-bounds to kmsg and the kernel keeps running. The runner reads the PCs, writes PCs and PC pairs into the extra-features section as user domains 0 and 1, then reads new kmsg records. If a KASAN record appeared, EXPECT_FALSE fails and the property fails; the controller re-runs the input alone, kasan_multi_shot reports again, and the crash file is saved on the host. Otherwise the features go to the controller."
+     decoding="async">
+<img class="fig-dark" src="img/26-fuzztest-lab-sequence.dark.svg" alt="" aria-hidden="true"
+     decoding="async">
+<figcaption><b class="cnum">Figure 12.1</b> One iteration of the FuzzTest kernel lab. Compare
+Figure&nbsp;6.2: the KCOV steps are the same; the input arrives typed, the PCs leave as features,
+and the KASAN report comes back as a property failure instead of a panic.</figcaption>
+</figure>
+
+<p>With that oracle the same lab ends the way a userspace finding does. In
+List&nbsp;12.13 the second KASAN report, at 7.498&nbsp;s, is the controller's confirmation run:</p>
+
+<span class="src"><b class="cnum">List 12.13</b> bash lab.sh fuzztest-local &mdash; KASAN in the guest, a typed counterexample, a confirmed and saved reproducer</span>
+<pre><code>[    3.197957] harden_local: loaded: /dev/harden_local (slots=16, page=4096 bytes)
+centipede.cc:398] [S0.32] init-done: ft: 201 cov: 51 df: 15 cmp: 81 usr0: 25 usr1: 29 corp: 5/5 ...
+centipede.cc:398] [S0.1000] new-feature: ft: 218 cov: 52 df: 15 cmp: 81 usr0: 28 usr1: 42 corp: 17/17 ...
+[    6.601340] BUG: KASAN: slab-out-of-bounds in harden_run+0x2d2/0x360 [harden_local]
+[    6.601363] Write of size 1 at addr ffff88810375ccd0 by task harden_fuzztest/243
+centipede.cc:1039] ReportCrash[1]: Batch execution failed:
+CRASH LOG: the kernel produced a KASAN report while parsing this 48-byte page — see the guest console ...
+CRASH LOG: Total runs: 1448
+CRASH LOG: harden_fuzztest.cc:172: Counterexample found for Harden.LocalCommands.
+CRASH LOG: argument 0: {Cmd{2, 186, 91, 253}, Cmd{0, 47, 127, 122}, Cmd{2, 9, 21, 114},
+                        <mark>Cmd{2, 16, 165, 131}</mark>, Cmd{1, 14, 98, 92}}
+CRASH LOG: TEST(Harden, LocalCommandsRegression) {
+CRASH LOG:   LocalCommands(
+CRASH LOG:     {Cmd{2, 186, 91, 253}, Cmd{0, 47, 127, 122}, Cmd{2, 9, 21, 114}, Cmd{2, 16, 165, 131}, ...}
+centipede.cc:1128] ReportCrash[1]: Executing inputs one-by-one, trying to find the reproducer
+[    7.498515] BUG: KASAN: slab-out-of-bounds in harden_run+0x2d2/0x360 [harden_local]
+centipede.cc:125] ReportCrash[1]: <mark>Detected crash-reproducing input:</mark>
+Saving input to: .../corpus-db/harden_fuzztest/workdir.000/Harden.LocalCommands/crashes.000000/d4c90b5c...
+[harden] fuzzer exit status: 1
+[harden] kernel taint: 32</code></pre>
+
+<p>Read the counterexample as a list of commands. The first and third are <code>OP_SET_RAW</code> with
+the wrong flag (91 and 21, not <code>0xA5</code> = 165) and do nothing. The fourth,
+<code>Cmd{2, 16, 165, 131}</code>, is <code>OP_SET_RAW</code>, the magic flag, and index 16: the first
+index past <code>HARDEN_SLOTS</code>, exactly at the boundary. The other commands are along for the
+ride; Centipede does not minimise (&sect;12.10 explains why that is a mercy here). The saved file
+replays in a fresh guest with <code>REPLAY=&lt;file&gt; bash lab.sh fuzztest-local</code>, which runs
+the property once with <code>FUZZTEST_REPLAY</code> and prints the same KASAN report and
+<code>harden_fuzztest.cc:135: Failure</code>.</p>
+
+<div class="aside"><b>When to keep <code>kasan.fault=panic</code>.</b> <code>report</code> mode
+lets corrupted memory live on. In one of the ablation runs (&sect;12.9) the first out-of-bounds write
+went into an object in KASAN's quarantine, and 0.24&nbsp;s later <code>qlist_free_all</code> took a
+general-protection fault and the guest panicked before the harness could read
+<code>/dev/kmsg</code>. That is why <code>Driver::Run</code> still calls
+<code>LogReproducer</code> first. With <code>KASAN_FAULT=panic</code> the FuzzTest lab behaves like
+Chapter&nbsp;6's, and <code>tools/harden/repro-harden_local-fuzztest.bin</code> holds the page; in
+that run it held <code>01 00 ... 02 e5 a5 01</code>, a single <code>SET_RAW</code> to index 229.</div>
+
+<h2 id="ftlab-remote">12.6 Remote coverage, unchanged</h2>
+
+<p><code>Harden.RemoteCommands</code> differs from <code>LocalCommands</code> in the device path and
+<code>KcovMode::kRemote</code>, and nothing else. The KCOV setup is Chapter&nbsp;6's remote harness.
+The oracle needs no change either, because <code>/dev/kmsg</code> does not care which task produced
+the report. A kworker's KASAN splat is caught as easily as a syscall's:</p>
+
+<span class="src"><b class="cnum">List 12.14</b> bash lab.sh fuzztest-remote &mdash; the report comes from a kworker; the property fails in the runner</span>
+<pre><code>centipede.cc:398] [S0.32] init-done: ft: 170 cov: 53 df: 15 cmp: 83 <mark>usr0: 8 usr1: 11</mark> corp: 6/6 ...
+[    5.348365] BUG: KASAN: slab-use-after-free in harden_run+0x2d2/0x360 [harden_remote]
+[    5.348376] Write of size 1 at addr ffff888108f79227 by task <mark>kworker/7:1/97</mark>
+CRASH LOG: Total runs: 103
+CRASH LOG: argument 0: <mark>{Cmd{2, 231, 165, 193}}</mark>
+[    6.254943] BUG: KASAN: slab-use-after-free in harden_run+0x2d2/0x360 [harden_remote]
+[    6.254952] Write of size 1 at addr ffff888108f79227 by task kworker/0:1/11
+centipede.cc:125] ReportCrash[1]: Detected crash-reproducing input:</code></pre>
+
+<p>Two details are worth noticing. <code>usr0: 8</code> is much smaller than the local lab's 25. With
+remote KCOV only the code between <code>kcov_remote_start_common()</code> and
+<code>kcov_remote_stop()</code> is recorded, which is the parser and not the ioctl path around it.
+And the KASAN class is <em>use-after-free</em>, not <em>out-of-bounds</em>: index 231 is 215 bytes past
+a 16-byte object, far enough to land in a neighbouring slab object that had been freed. KASAN names
+the memory it hit, not the mistake that got there, which is why &sect;6.13 reads the faulting
+<em>instruction</em> (<code>harden_run+0x2d2</code>, the same in every report) rather than the
+class.</p>
+
+<h2 id="ftlab-raw">12.7 <code>RawPage</code>: the libFuzzer harness, translated</h2>
+
+<p><code>Harden.RawPage</code> is Chapter&nbsp;6's harness as a FuzzTest property:
+<code>std::vector&lt;uint8_t&gt;</code> up to a page, written straight into the shared page, with
+<code>harden.seed</code> given as a typed seed:</p>
+
+<span class="src"><b class="cnum">List 12.15</b> tools/harden/fuzztest/harden_fuzztest.cc:142 &mdash; RawPage: bytes, plus the same near-miss seed as Chapter 6</span>
+<pre><code>void RawPage(const std::vector&lt;uint8_t&gt;&amp; bytes) {
+  bool hit = Driver::Get("/dev/harden_local")
+                 .Run(bytes.data(), bytes.size(), KcovMode::kLocal);
+  ExpectNoKasan(hit, bytes.size());
+}
+FUZZ_TEST(Harden, RawPage)
+    .WithDomains(Arbitrary&lt;std::vector&lt;uint8_t&gt;&gt;().WithMaxSize(kPageBytes))
+    // count=1, {op=SET_RAW, idx=0, flag=0xA5, val=1}.
+    .WithSeeds({{std::vector&lt;uint8_t&gt;{1, 0, 0, 0, 0, 0, 0, 0,
+                                      2, 0, 0xA5, 1, 0, 0, 0, 0}}});</code></pre>
+
+<p>The seed is one byte away from the bug: change <code>idx</code> from 0 to anything at or above 16.
+And yet <code>RawPage</code> was the slowest of the kernel labs, with 43&nbsp;888, 30&nbsp;368,
+133 and 22&nbsp;696 runs in four runs (the first took 1&nbsp;min&nbsp;49&nbsp;s). The counterexamples
+show why. The vector domain inserts and erases elements as readily as it changes them, so the
+eight-byte command grid slides, and the header's count field drifts away from the real number of
+commands:</p>
+
+<span class="src"><b class="cnum">List 12.16</b> RawPage counterexamples from two runs &mdash; what a byte-level mutator makes of an 8-byte command grid</span>
+<pre><code>argument 0: "\002\002\002\002\002\002\002H\001\006\006\002\002\002\002\002\002\360\245\002..."
+argument 0: "\001\000\000\000\000\000\000\000\002\020\245\001\000\377\377\377\377\377\377\377\377\000\000\000"</code></pre>
+
+<p>The second one is the seed with <code>idx</code> = <code>0x10</code> and some noise after it. The
+first is a count of 514, which the driver clamps to 511, over a page in which <code>02 .. f0 a5</code>
+happens to line up somewhere. <code>LocalCommands</code>, with no seed at all, needed 126&ndash;1448
+runs. The typed domain cannot misalign a command, because a command is a <code>StructOf</code>, and
+cannot get the count wrong, because <code>ToPage</code> computes it.</p>
+
+<h2 id="ftlab-ledger">12.8 A FuzzTest-native target: <code>harden_ledger</code> and a model-based property</h2>
+
+<p>The two Chapter&nbsp;6 drivers were designed for libFuzzer. Each has a memory-safety bug, so KASAN
+is the oracle and the fuzzer only has to reach the line. A whole class of kernel hardening bugs does
+not look like that. Accounting errors, such as a memcg charge that is never uncharged, an rlimit
+counter that drifts or a refcount that is decremented on the wrong path, are memory-safe. Every access
+stays in bounds, every allocation is freed, and no sanitizer reports anything. The damage is a security
+check that quietly stops working. Finding one needs an oracle that knows what the right answer
+<em>is</em>. That is a property, which is FuzzTest's native oracle (Figure&nbsp;12.2).</p>
+
+<p><code>samples/harden/ledger.c</code> is a minimal driver of that kind. Each open file of
+<code>/dev/harden_ledger</code> may pin at most <code>LEDGER_QUOTA</code> = 4096 bytes across eight
+objects, through four ioctls: <code>LEDGER_ALLOC</code>, <code>LEDGER_RESIZE</code>,
+<code>LEDGER_FREE</code> and <code>LEDGER_QUERY</code>. Its documented invariant is that
+<code>used</code> equals the sum of the live objects' sizes and never exceeds the quota. The quota check
+is written in the overflow-safe style kernel reviewers ask for, and it is correct, provided the
+invariant holds:</p>
+
+<span class="src"><b class="cnum">List 12.17</b> samples/harden/ledger.c:76 and :104 &mdash; a correct quota check, and the resize that breaks its precondition</span>
+<pre><code>static bool ledger_fits(const struct ledger *l, u32 size)
+{
+	return size &lt;= LEDGER_QUOTA - l-&gt;used;
+}
+...
+static noinline long ledger_resize(struct ledger *l, struct harden_ledger_op *op)
+{
+	...
+	o = &amp;l-&gt;obj[op-&gt;handle];
+	old = o-&gt;size;
+	if (op-&gt;size &gt; old &amp;&amp; !ledger_fits(l, op-&gt;size - old))
+		return -EDQUOT;
+
+	nbuf = krealloc(o-&gt;buf, op-&gt;size, GFP_KERNEL_ACCOUNT | __GFP_ZERO);
+	if (!nbuf)
+		return -ENOMEM;
+	o-&gt;buf = nbuf;
+	l-&gt;used = l-&gt;used - old + op-&gt;size;
+	<mark>/* BUG: the "o-&gt;size = op-&gt;size;" line is missing. */</mark>
+	return 0;
+}</code></pre>
+
+<p>One missing line. The total is updated and the object's own charge is not, so the next resize or
+free of that handle uncharges a stale size. <code>ALLOC 4000, RESIZE 100, FREE</code> leaves
+<code>used = 100 - 4000</code>, which wraps to about 4&nbsp;GiB. From then on
+<code>LEDGER_QUOTA - used</code> wraps too, and <code>ledger_fits()</code> accepts every request. The
+reverse order, growing and then freeing, leaves <code>used</code> too high instead, and the file is
+refused memory it is entitled to. Neither direction touches a byte out of bounds.</p>
+
+<p>The property is a reference model of the contract (not of the code) plus a comparison after every
+call. The model is a dozen lines:</p>
+
+<span class="src"><b class="cnum">List 12.18</b> tools/harden/fuzztest/ledger_fuzztest.cc:70 &mdash; the model implements the documented contract, not the driver</span>
+<pre><code>struct Model {
+  std::array&lt;uint32_t, kSlots&gt; size{};  // 0 = free slot
+  uint32_t used = 0;
+  int Do(const Alloc&amp; a) {
+    if (a.size &gt; kQuota - used) return -EDQUOT;
+    for (uint32_t h = 0; h &lt; kSlots; ++h)
+      if (size[h] == 0) { size[h] = a.size; used += a.size; return 0; }
+    return -ENOSPC;
+  }
+  int Do(const Resize&amp; r) {
+    if (r.handle &gt;= kSlots || size[r.handle] == 0) return -EBADF;
+    uint32_t old = size[r.handle];
+    if (r.size &gt; old &amp;&amp; r.size - old &gt; kQuota - used) return -EDQUOT;
+    used = used - old + r.size;
+    <mark>size[r.handle] = r.size;</mark>
+    return 0;
+  }
+  int Do(const Free&amp; f) { ... used -= size[f.handle]; size[f.handle] = 0; return 0; }
+};</code></pre>
+
+<span class="src"><b class="cnum">List 12.19</b> tools/harden/fuzztest/ledger_fuzztest.cc:144 &mdash; the property: same call to both, security invariant first, then full agreement</span>
+<pre><code>void KernelMatchesModel(const std::vector&lt;Call&gt;&amp; calls) {
+  Ledger kernel;                 // a fresh open file: the driver's state is per file
+  Model model;
+  harden::Kcov&amp; kcov = harden::Kcov::ForThisThread(harden::KcovMode::kLocal);
+
+  kcov.Begin();
+  for (size_t i = 0; i &lt; calls.size(); ++i) {
+    int want = std::visit([&amp;](const auto&amp; c) { return model.Do(c); }, calls[i]);
+    int got = std::visit([&amp;](const auto&amp; c) { return kernel.Do(c); }, calls[i]);
+    uint32_t used = kernel.Used();
+
+    <mark>ASSERT_LE(used, kQuota)</mark> &lt;&lt; "quota bypass after call #" &lt;&lt; i ...;
+    <mark>ASSERT_EQ(got, want)</mark> &lt;&lt; "return code differs at call #" &lt;&lt; i ...;
+    <mark>ASSERT_EQ(used, model.used)</mark> &lt;&lt; "ledger drift after call #" &lt;&lt; i ...;
+  }
+  harden::PublishKernelFeatures(kcov.End());
+}</code></pre>
+
+<p>The domain is List&nbsp;10.4. Note what the harness does <em>not</em> contain: no decoder, no
+handling of malformed input, no <code>abort()</code>. Opening a fresh file per input gives every
+input a clean ledger, because the driver frees everything in <code>release()</code>. Two ordinary unit
+tests sit in the same file, the ones a driver author would plausibly write:
+<code>{Alloc{100}, Free{0}}</code> and <code>{Alloc{100}, Resize{0, 200}}</code>. Both pass in the
+guest (<code>[  PASSED  ] 2 tests.</code>), because each call is correct on its own; only a
+<em>sequence</em> through the same handle breaks the ledger. Then the lab:</p>
+
+<span class="src"><b class="cnum">List 12.20</b> bash lab.sh fuzztest-ledger &mdash; the quota bypass, found in 2173 runs, with no sanitizer involved</span>
+<pre><code>[    3.288303] harden_ledger: loaded: /dev/harden_ledger (slots=8, quota=4096 bytes)
+centipede.cc:398] [S0.32] init-done: ft: 1566 cov: 46 df: 3 cmp: 81 usr0: 677 usr1: 759 corp: 11/11 ...
+centipede.cc:398] [S0.2000] new-feature: ft: 1670 cov: 56 df: 3 cmp: 102 usr0: 702 usr1: 807 corp: 35/35 ...
+CRASH LOG: ledger_fuzztest.cc:156: Failure
+CRASH LOG: Expected: (used) &lt;= (kQuota), actual: <mark>4294967006 vs 4096</mark>
+CRASH LOG: <mark>quota bypass after call #3 (Free)</mark>: used=4294967006
+CRASH LOG: Elapsed time: 373.927595ms
+CRASH LOG: Total runs: 2173
+CRASH LOG: === BUG FOUND!
+CRASH LOG: ledger_fuzztest.cc:167: Counterexample found for HardenLedger.KernelMatchesModel.
+CRASH LOG: argument 0: <mark>{Alloc{3585}, Resize{0, 3295}, Free{7}, Free{0}}</mark>
+CRASH LOG: === Regression test draft
+CRASH LOG: TEST(HardenLedger, KernelMatchesModelRegression) {
+CRASH LOG:   KernelMatchesModel(
+CRASH LOG:     {Alloc{3585}, Resize{0, 3295}, Free{7}, Free{0}}
+CRASH LOG:   );
+CRASH LOG: }
+centipede.cc:125] ReportCrash[1]: Detected crash-reproducing input:
+[harden] kernel taint: 0</code></pre>
+
+<p>Check the arithmetic: 3295 &minus; 3585 = &minus;290, and 2<sup>32</sup> &minus; 290 = 4&nbsp;294&nbsp;967&nbsp;006.
+<code>Free{7}</code> is a no-op (<code>-EBADF</code> on both sides, so the property agrees) that the
+engine did not bother to remove. The last line matters as much as the counterexample:
+<code>kernel taint: 0</code>. KASAN never fired, the kernel never noticed anything, and the lab
+<code>dmesg</code> is clean. The regression-test draft is a valid test to paste into
+<code>ledger_fuzztest.cc</code> next to the two that passed; it fails until the driver gets its missing
+line back. Two more runs produced the other failure direction, which is caught by the third assertion
+rather than the first:</p>
+
+<span class="src"><b class="cnum">List 12.21</b> another ledger run &mdash; the drift upward: no quota bypass, but the model disagrees</span>
+<pre><code>CRASH LOG: Expected equality of these values:
+CRASH LOG:   used
+CRASH LOG:     Which is: 3634
+CRASH LOG:   model.used
+CRASH LOG:     Which is: 0
+CRASH LOG: ledger drift after call #2 (Free)
+CRASH LOG: argument 0: {Alloc{462}, Resize{0, 4096}, Free{0}}</code></pre>
+
+<figure class="diagram-fig" id="fig-three-oracles">
+<img class="fig-light" src="img/27-three-oracles.svg" alt="One fuzz input runs the property body, which can fail in three ways. A userspace memory error makes ASan abort the runner. A kernel memory error makes KASAN print while the kernel survives; the harness scans /dev/kmsg with EXPECT_FALSE of new_report. A logic error means the kernel's answer differs from the model; ASSERT_EQ of used against model.used catches it, and no sanitizer can. All three end as a FuzzTest failure with BUG FOUND, a counterexample and a regression test draft. A dotted alternative shows that with kasan.fault=panic the guest dies with the controller and only HARDEN_REPRO survives."
+     decoding="async">
+<img class="fig-dark" src="img/27-three-oracles.dark.svg" alt="" aria-hidden="true"
+     decoding="async">
+<figcaption><b class="cnum">Figure 12.2</b> Three oracles, one report. Figure&nbsp;7.1 separated
+guidance from detection; FuzzTest widens detection from &ldquo;something crashed&rdquo; to &ldquo;any
+assertion failed&rdquo;, and that is what reaches a memory-safe kernel bug.</figcaption>
+</figure>
+
+<div class="card"><b>Could libFuzzer have found it?</b> Yes, with work. You would choose a byte
+encoding for call sequences, write the decoder, write the same model, and call
+<code>abort()</code> when it disagrees. The model is the essential part, and nothing about libFuzzer
+prevents it. What FuzzTest changes is cost and output. The domain is one expression, the oracle is
+<code>ASSERT_EQ</code>, and the finding comes back as <code>{Alloc{462}, Resize{0, 4096},
+Free{0}}</code> and a test to paste, not as 23 bytes to decode by hand.</div>
+
+<h2 id="ftlab-measure">12.9 What the measurements say, and an ablation</h2>
+
+<p>Every kernel lab was run three more times, each with a fresh corpus database
+(<code>CORPUS_DB=/tmp/...</code>) so that no run could reuse another's corpus. &ldquo;Runs&rdquo; is
+the runner's <code>Total runs</code> at the first failure:</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 12.3</b> Runs to the first confirmed finding on the Centipede engine, three fresh-corpus runs per lab, plus the ablation with kernel features hidden.</caption>
+<tr><th>Lab</th><th>with kernel features</th><th><code>HARDEN_NO_FEATURES=1</code></th><th>Wall time (with)</th></tr>
+<tr><td><code>Harden.LocalCommands</code></td><td>1328 / 126 / 369</td><td>571 / 2198<sup>*</sup> / 34</td><td>0.8&ndash;5.2&nbsp;s</td></tr>
+<tr><td><code>Harden.RemoteCommands</code></td><td>986 / 1285 / 2352</td><td>&mdash;</td><td>3.4&ndash;5.5&nbsp;s</td></tr>
+<tr><td><code>Harden.RawPage</code> (seeded)</td><td>30&nbsp;368 / 133 / 22&nbsp;696</td><td>132 / &dagger; / 397</td><td>0.6&ndash;38&nbsp;s</td></tr>
+<tr><td><code>HardenLedger.KernelMatchesModel</code></td><td>650 / 1419 / 1356</td><td>1263 / 345 / 1068</td><td>0.16&ndash;0.22&nbsp;s</td></tr>
+</table>
+</div>
+
+<p style="font-size:.92em;color:var(--muted);"><sup>*</sup> found once, but the guest then oopsed in
+KASAN's report printer during the confirmation run, so no reproducer was saved. &dagger;&nbsp;the first out-of-bounds write corrupted KASAN's quarantine
+and the guest panicked (&sect;12.5 aside); <code>HARDEN_REPRO</code> held a one-command page with
+index 229.</p>
+
+<p><code>HARDEN_NO_FEATURES=1</code> makes <code>PublishKernelFeatures</code> a no-op. The harness
+still collects KCOV, but the engine sees only the harness's own userspace coverage, which does not
+depend on what the kernel did. The honest reading of the table is that <b>for these four bugs the
+kernel coverage made no measurable difference</b>. That is not a failure of the seam: the
+<code>usr0</code>/<code>usr1</code> counts show it delivers. It is a property of the targets. Each
+planted bug is one branch deep. A typed domain makes <code>op=2</code> a one-in-four draw, and
+<code>flag=0xA5</code> is one byte in 256. A coverage gradient has nothing to climb. What did make a
+difference is visible in the first column: typed commands against the raw page, one to two orders of magnitude
+fewer runs in most runs, and much less variance. The ledger bug, which needs a three-call sequence through one handle, is
+found in under a quarter of a second either way, because the domain produces nothing <em>but</em> call
+sequences.</p>
+
+<p>The lesson generalises to how you should evaluate any fuzzing change, Part&nbsp;2's included.
+Plumbing that works is not plumbing that helps. A guidance signal earns its place only on a target
+where reaching the bug requires climbing, and showing that requires an ablation like this one.
+Exercise&nbsp;4 asks you to build such a target.</p>
+
+<h2 id="ftlab-engines">12.10 Engines meet the kernel: minimisation, corruption and replay</h2>
+
+<p>The same harnesses were also built with <code>ENGINE=legacy</code> and run against the same
+modules. Two runs per lab:</p>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 12.4</b> The legacy in-process engine on the kernel labs: what it found, and what the minimisation phase did to the guest.</caption>
+<tr><th>Run</th><th>First failure</th><th>Reported counterexample</th><th>KASAN reports in the run</th><th>Outcome</th></tr>
+<tr><td>ledger #1</td><td>run 272 (29&nbsp;ms)</td><td><code>{Alloc{4096}, Resize{0, 14}, Resize{0, 301}}</code></td><td>0</td><td>reported after 60&nbsp;s, 467&nbsp;525 runs</td></tr>
+<tr><td>ledger #2</td><td>about run 290 (31&nbsp;ms)</td><td><code>{Alloc{3989}, Resize{0, 1}, Free{0}}</code></td><td>0</td><td>reported after 60&nbsp;s, 430&nbsp;367 runs</td></tr>
+<tr><td>local #1</td><td>about run 200</td><td>none</td><td>14</td><td><b>guest Oops</b> inside the KASAN reporter after 258&nbsp;s</td></tr>
+<tr><td>local #2</td><td>about run 2600 (7&nbsp;s)</td><td><code>{Cmd{2, 16, 165, 0}}</code></td><td>19</td><td>reported after 17&nbsp;s, 13&nbsp;207 runs</td></tr>
+</table>
+</div>
+
+<p>The legacy engine finds the ledger bug as quickly as Centipede does, since neither needed the kernel
+signal. Then it spends a minute on <code>MinimizeNonFatalFailureLocally</code> (&sect;10.5), and the
+result is better than Centipede's: three calls, the minimum this bug needs, against Centipede's four
+with a no-op <code>Free{7}</code>. For a memory-safe, per-file target like the ledger, re-running the
+counterexample half a million times is harmless.</p>
+
+<p>For a memory-corrupting kernel bug it is not. In local #1 every minimisation attempt that still
+failed wrote another byte past <code>slots[]</code>. With <code>kasan_multi_shot</code> each one was
+reported, and the corruption accumulated in neighbouring slab objects and KASAN's own metadata. After
+258&nbsp;s the kernel faulted inside the report printer itself:</p>
+
+<span class="src"><b class="cnum">List 12.22</b> legacy engine, local #1 &mdash; repeated out-of-bounds writes during minimisation end in an Oops in KASAN's reporter</span>
+<pre><code>[  258.595593] BUG: unable to handle page fault for address: ffffed1028000000
+[  258.595613] Oops: Oops: 0000 [#1] SMP KASAN NOPTI
+[  258.595623] CPU: 3 UID: 0 PID: 236 Comm: harden_fuzztest Tainted: G    B   W  ...
+[  258.595638] RIP: 0010:<mark>stack_trace_print+0x41/0x90</mark>
+[  258.595689]  describe_object+0x1f/0x70
+[  258.595699]  print_address_description+0x1d2/0x200
+[  258.595715]  kasan_report+0x117/0x150
+[  258.595725]  harden_run+0x2d2/0x360 [harden_local]
+[  258.595735]  harden_ioctl+0x41/0x70 [harden_local]
+[  258.595808] Kernel panic - not syncing: Fatal exception</code></pre>
+
+<p>The out-of-process design does not protect the kernel either; the runner and the controller share
+one guest. What protects it in the Centipede runs is policy. Centipede does not minimise: it re-runs
+the failing input once to confirm it and then exits (<code>exit_on_crash</code>). So the bug fires
+twice per campaign, not dozens of times. If you want a minimal counterexample for a kernel memory bug,
+take the saved file to a <em>fresh</em> guest and minimise there, with
+<code>FUZZTEST_MINIMIZE_REPRODUCER</code> on a legacy build, rebooting whenever the guest becomes
+unreliable. The general rule: any engine feature that re-executes a finding (minimisation, the
+legacy engine's &ldquo;run it once more to crash&rdquo;, <code>--replay_crash_attempts</code>) has to
+be judged against what one execution does to shared state.</p>
+
+<div class="ex">
+  <h4>Exercises</h4>
+  <ol>
+    <li>Restore the missing <code>o-&gt;size = op-&gt;size;</code> in <code>ledger_resize()</code>,
+        rebuild the modules with <code>make LLVM=1 LOCALVERSION=-virtme -j"$(nproc)" modules</code>, and run
+        <code>fuzztest-ledger</code> for five minutes. Two wrong ways to rebuild, both seen in this
+        lab: without <code>LOCALVERSION=-virtme</code> the vermagic no longer matches the
+        <code>vng</code>-built kernel and <code>insmod</code> fails with &ldquo;Invalid module
+        format&rdquo;; with <code>make M=samples/harden</code> the modules load but are marked
+        out-of-tree, and <code>kernel taint</code> reads 4096 (<code>TAINT_OOT_MODULE</code>). Then paste List&nbsp;12.20's regression-test
+        draft into <code>ledger_fuzztest.cc</code> and confirm that it passes on the fixed driver and
+        fails on the buggy one.</li>
+    <li>Switch the oracle back to <code>KasanTainted()</code> and boot without
+        <code>kasan_multi_shot</code>. Reproduce List&nbsp;12.11's &ldquo;Crash was not observed when
+        running inputs one-by-one&rdquo;. Then try <code>--replay_crash_attempts=3</code>, and explain
+        why it cannot help.</li>
+    <li>Extend <code>PublishKernelFeatures</code> with a third user domain carrying
+        <code>(pc, log2(hits))</code>, libFuzzer-style counts. Does <code>usr2</code> grow on the
+        local driver? On which input shape would it matter?</li>
+    <li>Build a target where the kernel signal <em>should</em> matter: a driver whose bug sits behind
+        four sequential byte comparisons against unrelated constants. Repeat the ablation of
+        Table&nbsp;12.3. Then add KCOV comparison mode and feed the operands back, as &sect;6.15 did
+        for libFuzzer. Where do they have to go for a FuzzTest domain to use them?</li>
+    <li>Write <code>HardenLedger.ConcurrentMatchesModel</code>: two threads, each with its own open
+        file, and a model per file. What new oracle do you need if the files share a global quota?</li>
+  </ol>
+</div>
+
+<div class="recap"><span class="glabel">Chapter 12 &middot; recap</span><h4>Keywords to remember</h4><div class="kw"><span class="tag">fuzztest-experimental</span><span class="tag">vng --kconfig</span><span class="tag">-O1, -fno-builtin</span><span class="tag">__centipede_extra_features</span><span class="tag">usr0 / usr1</span><span class="tag">re-open after fork</span><span class="tag">kasan.fault=report</span><span class="tag">kasan_multi_shot</span><span class="tag">/dev/kmsg oracle</span><span class="tag">repeatable oracle</span><span class="tag">reference model</span><span class="tag">ablation</span><span class="tag">minimisation vs shared state</span></div><h4>Did you get it? Self-check</h4><ul class="check"><li><label><input type="checkbox"><span>I can build both engines and tell from the first line of output which one I am running.</span></label></li><li><label><input type="checkbox"><span>I can explain why <code>vng --build</code> ignored the config items, and why the legacy binary could not find the warm-up bug.</span></label></li><li><label><input type="checkbox"><span>I can encode kernel PCs as Centipede features and verify the engine consumes them.</span></label></li><li><label><input type="checkbox"><span>I can explain why the taint-bit oracle produced no crash file, and fix it.</span></label></li><li><label><input type="checkbox"><span>I can write a model-based property for a stateful kernel API.</span></label></li><li><label><input type="checkbox"><span>I can say what Table&nbsp;12.3's ablation shows and what it does not.</span></label></li><li><label><input type="checkbox"><span>I can explain why the legacy engine corrupted the guest and the Centipede runs did not.</span></label></li></ul></div>
+
+<div class="parthead" id="chapter-13">
+  <div class="eyebrow">Chapter 13</div>
+  <h2 class="chtitle">Where to contribute next &mdash; the FuzzTest edition</h2>
+  <p style="margin:0;color:var(--muted);">Chapter&nbsp;8 found its gaps by reading. This chapter's gaps
+  were found by running: each item below cost the lab time, or showed up in a log, before it was a
+  line in a list. Every claim was checked against FuzzTest <code>ed1ae14a62f9</code>, linux
+  <code>249a1b3322ca</code> and virtme-ng 1.41. As in Chapter&nbsp;8, the fastest way to make an entry
+  wrong is to fix it.</p>
+</div>
+
+<div class="goals">
+  <span class="glabel">Before you start · Chapter 13</span>
+  <p class="lead">After this chapter you will be able to:</p>
+  <ul>
+    <li>Pick a first FuzzTest patch that has an obvious reviewer and a test, from documentation to
+        engine behaviour.</li>
+    <li>Say which kernel-side changes would make a FuzzTest harness simpler, and why each one should
+        be proposed on the list before it is written.</li>
+    <li>Turn one of the lab's workarounds into an upstream report with a minimal reproducer.</li>
+  </ul>
+</div>
+
+<h2 id="ftcontrib-fuzztest">13.1 FuzzTest and Centipede</h2>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 13.1</b> FuzzTest-side gaps found by the lab, with the evidence and the size of a first patch.</caption>
+<tr><th>#</th><th>Gap</th><th>Evidence at ed1ae14a62f9</th><th>First patch</th></tr>
+<tr><td>F1</td><td>Most user flags are undocumented</td>
+    <td><code>doc/flags-reference.md</code> covers <code>--fuzz</code>, <code>--fuzz_for</code>,
+        <code>--rss_limit_mb</code>, <code>--stack_limit_kb</code>, <code>--time_limit_per_input</code>.
+        <code>--jobs</code>, <code>--corpus_database</code>, <code>--continue_after_crash</code>,
+        <code>--unguided</code>, <code>--replay_corpus</code>, <code>--list_fuzz_tests</code>,
+        <code>--replay_crash_attempts</code> and <code>--print_subprocess_log</code> appear nowhere in
+        <code>doc/</code> or <code>README.md</code>, though each has a help string in
+        <code>init_fuzztest.cc</code>.</td>
+    <td>Small: generate the reference from the <code>FUZZTEST_DEFINE_FLAG</code> help strings, and
+        say which flags are Centipede-only.</td></tr>
+<tr><td>F2</td><td>The Centipede engine is undocumented for users</td>
+    <td>No file in <code>doc/</code> mentions <code>fuzztest-experimental</code> or
+        <code>centipede_integration</code>, the only route to <code>--jobs</code> and to user
+        features (&sect;10.4).</td>
+    <td>Small: a quickstart section; the commit message of <code>c7db83ddcdb8</code> already says
+        &ldquo;No documentation yet&rdquo;.</td></tr>
+<tr><td>F3</td><td>The user-feature seam is an experiment</td>
+    <td><code>user_defined_features_target.cc</code>: &ldquo;TODO(kcc): graduate this from an
+        experiment and document properly&rdquo;. The zero-means-unset trap (&sect;11.7) is documented
+        only in a comment.</td>
+    <td>Medium: a header with a typed helper (<code>EmitUserFeature(domain, id)</code>) that cannot
+        emit 0, plus a doc page. The lab's <code>MakeFeature</code> is a starting point.</td></tr>
+<tr><td>F4</td><td>CMake cannot build Centipede mode</td>
+    <td><code>centipede/</code> has no <code>CMakeLists.txt</code>; <code>FuzzTestFlagSetup.cmake</code>
+        configures the legacy engine only.</td>
+    <td>Large: needs maintainers' agreement first, since it doubles the build surface.</td></tr>
+<tr><td>F5</td><td>The two configs differ in <code>-fno-builtin</code></td>
+    <td><code>setup_configs.sh</code> sets it for <code>fuzztest-experimental</code> only. At
+        <code>-O1</code> the legacy build loses the warm-up bug entirely (List&nbsp;12.5).</td>
+    <td>Small to propose, careful to land: it changes code generation for every legacy user. A
+        documentation note costs nothing.</td></tr>
+<tr><td>F6</td><td>An <code>-O0</code> recursion between the runner and instrumented libstdc++ inlines</td>
+    <td>List&nbsp;12.4: <code>CheckStackLimit</code> &rarr; <code>std::operator&amp;</code> (COMDAT,
+        instrumented) &rarr; <code>__sanitizer_cov_trace_pc_guard</code> &rarr; ... with clang&nbsp;21 and
+        GCC&nbsp;16's libstdc++.</td>
+    <td>A minimal reproducer and an issue. The fix is the maintainers' choice: avoid the inline
+        in the callback path, or document <code>-O1</code>.</td></tr>
+<tr><td>F7</td><td>README says &ldquo;only C++ is supported&rdquo;</td>
+    <td><code>README.md:40</code>, while <code>rust/</code> has existed since
+        <code>741fd4068ec6</code> (2025-05).</td>
+    <td>One line, plus a pointer to <code>cargo-fuzztest</code>.</td></tr>
+</table>
+</div>
+
+<p>F1, F2, F3 and F7 are documentation, and that is not a consolation prize. FuzzTest's own history
+(&sect;11.4) shows the engine moving faster than its docs. A reader who could not find
+<code>--jobs</code> or the extra-features section is exactly the reader the next version of this book
+is for. F3 is the item closest to the book's subject: the seam that let Part&nbsp;2 work is
+<code>__libfuzzer_extra_counters</code>, documented since 2017 (&sect;2.2). Its Centipede counterpart
+is still a test file with a TODO.</p>
+
+<h2 id="ftcontrib-kernel">13.2 The kernel, and the tools around it</h2>
+
+<div class="tablewrap">
+<table>
+<caption><b class="cnum">Table 13.2</b> Kernel-side and tooling gaps the FuzzTest lab worked around.</caption>
+<tr><th>#</th><th>Gap</th><th>What the lab does instead</th><th>Where to start</th></tr>
+<tr><td>K1</td><td>A KASAN report cannot be attributed to the task that caused it</td>
+    <td>Scrapes <code>/dev/kmsg</code> for <code>BUG: KASAN</code> before and after each input, which needs
+        <code>kasan_multi_shot</code> and cannot tell two concurrent harnesses apart (&sect;12.5).</td>
+    <td>This is &sect;7.3's &ldquo;reporting bridge&rdquo; again, seen from a second engine. A
+        per-task report counter, readable by the task, is the smallest proposal; take it to the list
+        first.</td></tr>
+<tr><td>K2</td><td>The taint bit is the only cheap signal, and it is sticky</td>
+    <td>The first oracle used it and lost the reproducer (List&nbsp;12.11).</td>
+    <td>Not a bug: taint is defined to be sticky. A documentation note in
+        <code>dev-tools/kasan.rst</code> that a harness should not use it per input would have saved
+        an afternoon.</td></tr>
+<tr><td>K3</td><td>KCOV's fork pattern does not fit a fork server</td>
+    <td>Opens a fresh KCOV session in every runner (List&nbsp;12.9).</td>
+    <td><code>kcov.rst</code> documents the parent-initialises, child-enables pattern; one paragraph
+        on engines that fork before user code runs would complete it.</td></tr>
+<tr><td>K4</td><td><code>vng --build</code> ignores <code>--configitem</code> when a
+    <code>.config</code> exists</td>
+    <td><code>lab.sh</code> runs <code>vng --kconfig</code> first and checks the result (List&nbsp;12.3).</td>
+    <td>virtme-ng: the behaviour is the documented meaning of <code>--force</code>, but nothing warns
+        when config items are passed and then dropped. A warning is a small, reviewable patch.</td></tr>
+</table>
+</div>
+
+<h2 id="ftcontrib-joint">13.3 The joint frontier: typed inputs for the kernel</h2>
+
+<p>The ledger lab points at a larger idea. The domain in List&nbsp;10.4 is a hand-written description
+of four ioctls. The kernel already has machine-readable descriptions of most of its ioctl surface,
+syzkaller's syzlang, and FuzzTest already has domains generated from external descriptions
+(<code>InGrammar</code> from ANTLR, <code>Arbitrary&lt;Proto&gt;</code> from protobuf). A generator
+from a syzlang description to <code>VectorOf(VariantOf(StructOf&lt;...&gt;))</code> would give every
+driver a typed, stateful harness for the price of the description. A reference model, for the
+subsystems that have a clear contract (quotas, refcounts, ID allocators), would give it an oracle that
+KASAN cannot provide. Neither half exists in either tree at the commits this book was checked against.
+That makes it a research project rather than a patch, and the right place to start is a mailing-list
+thread rather than a pull request.</p>
+
+<div class="ex">
+  <h4>Exercises</h4>
+  <ol>
+    <li>Write the F6 reproducer: the smallest <code>cc_test</code> that crashes with
+        <code>--config=fuzztest-experimental</code> at <code>-O0</code> and not at <code>-O1</code>.
+        Does it need ASan? Does it need GCC's libstdc++, or does libc++ show the same thing?</li>
+    <li>Draft F3's helper header. What should it do with a domain index of 16 or more, which
+        <code>sancov_state.cc</code> silently folds modulo 16?</li>
+    <li>For K1, read <code>end_report()</code> in <code>mm/kasan/report.c</code> and list every place a
+        per-task counter could be incremented. Which of them run in the faulting task's context for a
+        <em>remote</em> (kworker) bug, and what does that mean for the remote harness?</li>
+  </ol>
+</div>
+
+<div class="recap"><span class="glabel">Chapter 13 &middot; recap</span><h4>Keywords to remember</h4><div class="kw"><span class="tag">flags-reference gap</span><span class="tag">fuzztest-experimental docs</span><span class="tag">graduate extra features</span><span class="tag">-fno-builtin asymmetry</span><span class="tag">-O0 recursion</span><span class="tag">KASAN attribution</span><span class="tag">sticky taint</span><span class="tag">KCOV fork pattern</span><span class="tag">vng --kconfig</span><span class="tag">syzlang to domains</span></div><h4>Did you get it? Self-check</h4><ul class="check"><li><label><input type="checkbox"><span>I can name two FuzzTest documentation gaps and point at the source that proves each.</span></label></li><li><label><input type="checkbox"><span>I can explain why F5 is easy to write and hard to land.</span></label></li><li><label><input type="checkbox"><span>I can state K1 as a proposal small enough for a first mailing-list thread.</span></label></li><li><label><input type="checkbox"><span>I can sketch what a syzlang-to-domain generator would emit for the ledger driver.</span></label></li></ul></div>
+
+<div class="partclose">
+  <span class="plabel">Part 4 &middot; wrap-up &mdash; end of the book</span>
+  <h3>Same kernel, new front-end, wider oracle</h3>
+  <p>The FuzzTest lab reused every piece of Part&nbsp;2's kernel plumbing: KCOV, the shared page,
+  virtme-ng, KASAN, the reproducer-before-run discipline. What changed is at the two ends. The input is
+  a typed value that cannot be malformed. The output is any assertion failure, reported, confirmed and
+  saved by an engine that survives its runners. The kernel coverage seam moved from counters to
+  features and worked, and the ablation showed honestly that these bugs did not need it. The ledger
+  driver showed the case that matters most for hardening: a memory-safe bug that only a property can
+  see.</p>
+  <div class="ex">
+    <h4>Further exercises &mdash; think first, then open the answer</h4>
+    <ol>
+      <li>Your FuzzTest kernel harness reports a failure, but the corpus database has no
+          <code>crashes.000000/</code> entry, only a batch of suspects. What is the first thing to
+          check?
+        <details class="ans"><summary>Answer</summary><div class="body">Whether the oracle is
+          repeatable. Centipede saves only an input that fails again when re-run alone. A sticky taint
+          bit, a one-shot KASAN, or any state that survives between inputs makes the re-run pass. Use
+          <code>kasan_multi_shot</code> and a per-input <code>/dev/kmsg</code> scan, and open a fresh
+          file per input for stateful drivers (&sect;12.5, &sect;12.8).</div></details></li>
+      <li>Under Centipede the harness writes KCOV PCs into the extra-features section, but
+          <code>usr0</code> stays at 0. Name two likely causes.
+        <details class="ans"><summary>Answer</summary><div class="body">(1) KCOV was enabled in a
+          process or thread other than the runner's, for example in a global constructor before the
+          fork server forked, so the runner's session records nothing. Open it lazily in the runner
+          and re-open on a tid change (List&nbsp;12.9). (2) Every feature was 0: an id of 0 in domain 0
+          is &ldquo;unset&rdquo;. Make the id non-zero (List&nbsp;12.8). Also check that the binary was
+          built with <code>--config=fuzztest-experimental</code> at all
+          (List&nbsp;12.10).</div></details></li>
+      <li>The legacy engine gives a smaller counterexample than Centipede for the same kernel bug.
+          Why might you still prefer Centipede's for a memory-corrupting driver?
+        <details class="ans"><summary>Answer</summary><div class="body">The legacy engine got the
+          smaller counterexample by re-running the bug many times in the same kernel. Each run
+          corrupts more memory; in the lab that ended in an Oops inside KASAN's reporter. Centipede
+          runs the bug twice and stops. Minimise afterwards, in a fresh guest
+          (&sect;12.10).</div></details></li>
+      <li>Is a model-based property just a slower unit test?
+        <details class="ans"><summary>Answer</summary><div class="body">No. The two unit tests in
+          <code>ledger_fuzztest.cc</code> check two hand-picked sequences and pass. The property checks
+          every sequence the domain can produce, coverage-guided, against the contract, and found a
+          three-call counterexample in under a quarter of a second. The model is written once; the
+          sequences are the engine's job (&sect;12.8).</div></details></li>
+    </ol>
+  </div>
+</div>
+
+
 <!-- ===================== END MATTER ===================== -->
 
 <div class="parthead" id="epilogue">
@@ -5690,6 +7559,19 @@ coverage is a random walk that happens to be instrumented. The two halves are bu
 people, enabled by different configuration, and debugged by different techniques, which is why
 Chapter&nbsp;6 and Chapter&nbsp;7 are separate chapters and why the lab turns on both before it
 claims anything.</p>
+
+<h3>What the second engine taught</h3>
+
+<p>Parts&nbsp;3 and&nbsp;4 ran the same experiment with FuzzTest, and the seam survived the change of
+engine. It is a section of 64-bit features rather than a byte array, but the harness still fills it
+from KCOV and the engine still cannot tell who did. What changed was both ends of the loop. The input
+became a typed value that cannot be malformed, so the harness lost its decoder. The oracle became any
+assertion, so a kernel bug no longer has to panic the guest to be seen, and a memory-safe accounting
+bug that no sanitizer reports was found by comparing the driver with a dozen-line model. Figure&nbsp;7.1's
+lesson held in a new form. In the lab's ablation the kernel coverage did not matter for any of the
+planted bugs, while the typed domains and the property oracle mattered for all of them. Guidance and
+detection are still separate subsystems, and the second one turned out to be the one with room to
+grow.</p>
 
 <h3>What is still open</h3>
 
@@ -5727,17 +7609,18 @@ better one than a summary.</p>
 
 <p>As for the engine: libFuzzer will probably not grow another subsystem. It is therefore a stable
 thing to study and a cautious thing to depend on, and those two facts are not in tension. What
-transfers out of these 191 pages is not the engine but the shape of it &mdash; instrument, execute,
+transfers out of these pages is not the engine but the shape of it &mdash; instrument, execute,
 score, select, mutate &mdash; and that shape is what Centipede, AFL++, syzkaller and whatever comes
 next are all implementations of. Having read one of them line by line, you will recognise the others
 on sight, and you will know which of their claims to check first.</p>
 
 <p>The next step is not another chapter. Clone the tree, build the lab, break the driver, read the
-report, and then go and fix one of the files in Chapter&nbsp;8.</p>
+report, and then go and fix one of the files in Chapter&nbsp;8, or one of the gaps in
+Chapter&nbsp;13.</p>
 
 <p class="signoff"><b>Yunseong Kim</b>
 <a href="mailto:ysk@kzalloc.com">ysk@kzalloc.com</a>
-<span class="where">you-shall-know-libfuzzer &middot; 9 chapters, 20 figures, 116 listings</span></p>
+<span class="where">you-shall-know-libfuzzer &middot; 13 chapters, 27 figures, 148 listings</span></p>
 
 
 <!-- ===================== PART VII ===================== -->

@@ -1,0 +1,15 @@
+flowchart LR
+    subgraph LF["libFuzzer — the unit is a byte array"]
+        direction LR
+        L1["corpus file<br/>raw bytes"] --> L2["MutationDispatcher<br/>bit flips, splices, TORC"]
+        L2 --> L3["LLVMFuzzerTestOneInput<br/>(data, size)"]
+        L3 --> L4["harness decodes bytes<br/>into the API it calls"]
+    end
+    subgraph FT["FuzzTest — the unit is a typed value"]
+        direction LR
+        F1["corpus file<br/>FUZZTESTv1 IRObject"] --> F2["domain.Mutate(corpus_type)<br/>knows the type's shape"]
+        F2 --> F3["domain.GetValue<br/>corpus_type to value_type"]
+        F3 --> F4["Property(args...)<br/>plain C++ with EXPECT_*"]
+    end
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class L4,F2 accent
