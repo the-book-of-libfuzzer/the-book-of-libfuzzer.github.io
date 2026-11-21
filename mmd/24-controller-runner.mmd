@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    participant U as test binary
+    participant C as controller
+    participant S as fork server
+    participant R as runner
+    participant B as shared memory
+    Note over U,C: one process: --fuzz=S.P, CentipedeMain
+    Note over S,R: same binary again, CENTIPEDE_RUNNER_FLAGS set
+    U->>C: CentipedeFuzzerAdaptor::Run hands over control
+    C->>S: launch the binary again as a runner
+    S->>R: fork() a runner when one is needed, parent stays warm
+    C->>B: write a batch of parent inputs, persistent runner takes batch after batch
+    R->>R: Mutate: FuzzTest domains build the children
+    R->>R: Execute: run the property on each input
+    R->>B: per input: PCs, CMP, callstack, user features
+    B-->>C: batch results
+    C->>C: FeatureSet: new feature, keep input, weight by rarity
+    alt a runner died or a property failed
+        C->>R: re-run the batch one input at a time
+        R-->>C: the input that reproduces
+        C->>C: save crashes/sha1 and crash-metadata, exit_on_crash
+    end
+    Note over C,R: a crash kills a runner, never the controller

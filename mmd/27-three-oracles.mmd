@@ -1,0 +1,11 @@
+flowchart TB
+    I["one fuzz input"] --> X["property body runs"]
+    X --> A["userspace memory error<br/>ASan aborts the runner"]
+    X --> K["kernel memory error<br/>KASAN prints, kernel survives"]
+    X --> M["logic error<br/>kernel answer differs from the model"]
+    A --> F["FuzzTest failure<br/>BUG FOUND, counterexample,<br/>regression test draft"]
+    K -->|"harness scans /dev/kmsg<br/>EXPECT_FALSE(new_report)"| F
+    M -->|"ASSERT_EQ(used, model.used)<br/>no sanitizer can see this"| F
+    K -.->|"kasan.fault=panic instead"| P["guest dies with the controller<br/>only HARDEN_REPRO survives"]
+    classDef accent fill:#0b63c5,color:#fff,stroke:#0b63c5
+    class F,M accent
